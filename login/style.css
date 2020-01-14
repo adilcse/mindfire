@@ -1,0 +1,58 @@
+html { 
+  background: url(image.jpeg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.form_body{
+	background-color: #404142;
+ 	padding: 20px;
+ 	 width: 350px;
+  border: 1px solid green;
+ 	justify-content: center;
+	align-items: center;
+	position: relative;
+	
+	border-radius: 20px;
+}
+
+.textbox{
+	font-size: 18px;
+	font-family: Helvetica;
+	border-radius: 10px;
+	border: 0;
+padding: 5px;
+	margin: 4px;
+}
+
+.button{
+	border-radius: 7px;
+	font-size: 20px;
+	background-color: #3f5b99;
+	border-color: blue;
+	color: white;
+}
+.button_grp{
+	margin-top: 5px;
+}
+.header{
+	background-color: #404142;
+	color: white;
+ 	 width:50%;
+ 	 margin-top: 10%;
+  border: 1px solid green;
+ 	justify-content: center;
+	align-items: center;
+	position: relative;
+	font-size: 3rem;
+	border-radius: 20px;
+}
+#logo{
+	margin-top: 5px;
+	border-radius: 5px;
+}
+#welcome{
+	margin-bottom: 10px;
+}

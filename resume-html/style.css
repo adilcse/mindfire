@@ -1,0 +1,45 @@
+   .potrait{
+            margin-left: 200px;
+            margin-right: 200px;
+            padding: 2px;
+        }
+        .detail_body{
+                    }
+        .details {
+          color: #000;
+               
+                width: 48%;
+                float: left;
+        }
+        .profile_pic{
+            color: #000;
+                
+                width: 48%;
+                float: right;
+
+         }
+        .left_body{
+            float: left;
+            width: 55%;
+        }
+        .right_body{
+            float: right;
+             width: 40%;
+        }
+        
+        table {
+            font-family:   sans-serif;
+            width: 100%;
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        td, th, li {
+            text-align: left;
+            padding: 6px;
+        }
+
+        tr:nth-child(even) {
+            background-color:#9f9fdf;
+        }
+        

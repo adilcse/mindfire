@@ -3,8 +3,12 @@ html {
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
+  
+  scroll-behavior: unset;
   background-size: cover;
+  font-family: 'IM Fell Great Primer SC', serif;
 }
+
 
 .form_body{
 	background-color: #404142;
@@ -14,7 +18,7 @@ html {
  	justify-content: center;
 	align-items: center;
 	position: relative;
-	
+	margin-left: 25%;
 	border-radius: 20px;
 }
 
@@ -36,18 +40,20 @@ padding: 5px;
 }
 .button_grp{
 	margin-top: 5px;
+	margin-left: 10%;
 }
 .header{
 	background-color: #404142;
 	color: white;
  	 width:50%;
- 	 margin-top: 10%;
   border: 1px solid green;
  	justify-content: center;
 	align-items: center;
 	position: relative;
 	font-size: 3rem;
 	border-radius: 20px;
+	min-width: 90%;
+	padding-left: 100px;
 }
 #logo{
 	margin-top: 5px;
@@ -55,4 +61,22 @@ padding: 5px;
 }
 #welcome{
 	margin-bottom: 10px;
+	
+}
+h2{
+	color: white;
+	margin-left: 40%;
+	font-family: 'IM Fell Great Primer SC', serif;
+}
+.bg{
+	margin: 10%;
+	margin-left: 15%;
+	justify-content: center;
+	align-items: center;
+}
+.inputs{
+	margin-left: 20%;
+}
+p{
+	color: white;
 }

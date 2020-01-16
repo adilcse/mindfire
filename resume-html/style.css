@@ -1,45 +1,106 @@
-   .potrait{
-            margin-left: 200px;
-            margin-right: 200px;
-            padding: 2px;
-        }
-        .detail_body{
-                    }
-        .details {
-          color: #000;
-               
-                width: 48%;
-                float: left;
-        }
-        .profile_pic{
-            color: #000;
-                
-                width: 48%;
-                float: right;
+body{
+    background-color: grey;
+    text-align: center;
+    font-family:  'Roboto', sans-serif;
+}
 
-         }
-        .left_body{
-            float: left;
-            width: 55%;
-        }
-        .right_body{
-            float: right;
-             width: 40%;
-        }
-        
-        table {
-            font-family:   sans-serif;
-            width: 100%;
-            border: 1px solid black;
-            border-collapse: collapse;
-        }
+.container{
+	display: inline-block;
+    background-color: white;
+    width : 70%;
+    height : 500px;	
+     margin: auto;
+}
+.header{
+	background-color: white;
+	margin : 10px;
+	overflow::show;
+	border: 3px solid grey;
+	position: relative;
+}
+.h-name{
+	font-size: 5rem;	
+	color: grey;
 
-        td, th, li {
-            text-align: left;
-            padding: 6px;
-        }
+}
+.h-job{
+	position: relative;
+    display: inline;
+	font-size: 2rem;
+	background-color: #ff9900;
+	text-align: center;
+	bottom: -18px;
+	color: white;
+	padding: 5px;
+	 
+}
+.row{
+	margin: 30px;
+	display :flex;
+}
+.col-ls{
+	width: 60%;
+	align-items: left;
 
-        tr:nth-child(even) {
-            background-color:#9f9fdf;
-        }
-        
+}
+.about{
+	border-bottom: 2px solid #ff9900;
+	display: inline-block;
+	font-size: 1.17rem;
+	margin-top: 20px;
+
+}
+.col-rs{
+	text-align: left;
+	margin-left: 10px;
+	
+}
+p{
+	font-family:  'Roboto', cursive;
+	font-size: 1.2rem;
+}
+@media only screen and (max-width: 400px) and (min-width: 320px) {
+  .container {
+  	display: inline-block;
+    background-color: white;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 50;
+      }
+      h1{
+      	
+      	background-color: grey;
+      	color: white;
+      	border-radius:5px;   
+      	width: 100%;
+      	display: inline;
+      	   }
+
+}
+@media only screen and (max-width: 320px)  {
+  .container {
+  	text-align: center;
+  	display: inline-block;
+    background-color: white;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 100px;
+      }
+      h1{
+      	text-align: center;
+      	background-color: grey;
+      	color: white;
+      	border-radius:5px;   
+      	   }
+    h5{
+    	text-align: center;
+    }  
+}

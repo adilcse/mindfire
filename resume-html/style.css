@@ -1,21 +1,22 @@
 body{
-    background-color: grey;
-    text-align: center;
-    font-family:  'Roboto', sans-serif;
+  background-color: grey;
+  text-align: center;
+  font-family:  'Roboto', sans-serif;
 }
 
 .container{
 	display: inline-block;
-    background-color: white;
-    width : 70%;
-    height : 500px;	
-     margin: auto;
+  background-color: white;
+  width : 70%;
+  margin: auto;
+  border-radius: 10px;	
 }
 .header{
 	background-color: white;
-	margin : 10px;
-	overflow::show;
-	border: 3px solid grey;
+	margin : 10px 50px;
+
+	overflow:show;
+	border: 3px solid #4d4a4a;
 	position: relative;
 }
 .h-name{
@@ -25,7 +26,7 @@ body{
 }
 .h-job{
 	position: relative;
-    display: inline;
+  display: inline;
 	font-size: 2rem;
 	background-color: #ff9900;
 	text-align: center;
@@ -37,6 +38,7 @@ body{
 .row{
 	margin: 30px;
 	display :flex;
+ 
 }
 .col-ls{
 	width: 60%;
@@ -55,52 +57,187 @@ body{
 	margin-left: 10px;
 	
 }
+
 p{
 	font-family:  'Roboto', cursive;
 	font-size: 1.2rem;
+  line-height: 1.5em;
 }
-@media only screen and (max-width: 400px) and (min-width: 320px) {
-  .container {
-  	display: inline-block;
-    background-color: white;
-    width: 100%;
-    height: 100%;
-    margin: 0px;
-    padding: 10px;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: 50;
-      }
-      h1{
-      	
-      	background-color: grey;
-      	color: white;
-      	border-radius:5px;   
-      	width: 100%;
-      	display: inline;
-      	   }
+.col-edu{
+
+ width: 30%;
+
 
 }
-@media only screen and (max-width: 320px)  {
-  .container {
-  	text-align: center;
-  	display: inline-block;
-    background-color: white;
+.col-skl{
+  width: 40%;
+  border-left: 1px solid  #4d4a4a;
+  border-right: 1px solid #4d4a4a; 
+
+}
+
+.title-lr{
+  background-color: #ff9900;
+  color: white;
+  display: inline-block;
+  letter-spacing: 0.1em;
+  padding: 3px 15px;
+  
+}
+.title-skl{
+  background-color: #4d4a4a;  
+}
+.edu-text{
+  letter-spacing: 0.1em;
+  margin: 15px 10px;
+  line-height: 1.5em;
+}
+.mr-row{
+  
+  justify-content: center;
+  text-align: center;
+}
+.project{
+  display: inline-block;
+  margin: 5px;
+  width: 80%;
+}
+.project-title{
+  margin-top: 0px;
+  width: 100%;
+}
+.project-body{
+  text-align: left;
+
+}
+.project-wraper{
+  text-align: center;
+  padding: auto;
+}
+@media only screen and (max-width: 1800px) and (min-width: 1400px) {
+ .container{
+    width : 60%;
+  } 
+
+}
+@media only screen and (max-width: 2400px) and (min-width: 1800px) {
+ .container{
+    width : 55%;
+  } 
+}
+@media only screen and (max-width: 1000px) and (min-width: 800px  )  {
+  .container{
+    width : 85%;
+  }
+  .h-name{
+    font-size: 4.5rem;  
+  } 
+  .h-job{
+    font-size: 1.75rem;
+  }
+}
+@media only screen and (max-width: 800px) and (min-width: 710px  )  {
+  .container{
+    width : 95%;
+  } 
+  .h-name{
+    font-size: 4rem;  
+  } 
+  .h-job{
+    font-size: 1.5rem;
+  }
+}
+@media only screen and (max-width: 710px)  {
+  .container{
+    width : 100%;
+    border-radius: 0px;
+  } 
+  body{
+    margin:0px;
+  }
+  .header{
+    margin : 10px 30px;
+  }
+
+}
+@media only screen and (max-width: 710px) and (min-width: 520px)  {
+  .h-name{
+    font-size: 3.5rem;  
+  }
+  .h-job{
+    font-size: 1.25rem;
+    }
+  .title-lr{
+    padding: 3px 10px;
+  }
+}
+@media only screen and (max-width: 600px)  {
+  .row{
+    flex-direction: column;
+  }
+  .col-ls{
     width: 100%;
-    height: 100%;
-    margin: 0px;
-    padding: 10px;
-    border-radius: 10px;
-    font-size: 18px;
-    font-weight: 100px;
-      }
-      h1{
-      	text-align: center;
-      	background-color: grey;
-      	color: white;
-      	border-radius:5px;   
-      	   }
-    h5{
-    	text-align: center;
-    }  
+  }
+  .col-rs{
+    text-align: center;
+    margin-left: 0px;
+  }
+  .header{
+    margin : 7px 20px;
+  }
+  .col-edu{
+    width: 100%;
+    margin-top: 1.3em;
+  }
+  .col-skl{
+    width: 100%;
+    border:none;
+  }
+  .edu-text div{
+    font-size: 1.2em;
+  }
+  .title-lr{
+    display: block;
+  }
+  .about{
+    display: block;
+  }
+}
+
+@media only screen and (max-width: 520px) and (min-width: 400px)  {
+  .h-name{
+    font-size: 2.2rem;  
+  }
+  .h-job{
+    font-size: 1.1rem;
+  }
+  .col-ls p{
+    font-size: 1.05em;
+  }
+}
+@media only screen and (max-width: 400px){
+  .edu-text div{
+    font-size: 1em;
+  }
+  .h-name{
+    font-size: 2em;  
+  }
+  .h-job{
+    font-size: 1rem;
+  }
+  .row{
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  li{
+    font-size: 1.1em;
+  }
+}
+@media only screen and (max-width: 300px)   {
+  .h-name{
+    font-size: 1.75rem;  
+  }
+  .h-job{
+    font-size: 0.8rem;
+    }
 }

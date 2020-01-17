@@ -108,11 +108,12 @@ p{
 }
 .project-body{
   text-align: left;
-
 }
 .project-wraper{
   text-align: center;
   padding: auto;
+  margin: auto;
+  display: inline-block;
 }
 @media only screen and (max-width: 1800px) and (min-width: 1400px) {
  .container{
@@ -231,6 +232,7 @@ p{
   }
   li{
     font-size: 1.1em;
+    margin-bottom: 10px;
   }
 }
 @media only screen and (max-width: 300px)   {

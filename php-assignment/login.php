@@ -16,7 +16,7 @@
     {
         $uid=$_POST["username"];
         $password=$_POST["password"];
-        if($uid==="mindfire" && $password === "mindfire"){
+        if($uid==="adil" && $password === "mindfire"){
                 $_SESSION["username"]=$uid;
                 $_SESSION["LoggedIn"]=true;
                 $_SESSION["login-error"]=NULL;
@@ -44,7 +44,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
                             </div>
-                            <input type="text" class="form-control" name="username" placeholder="username" id="username" minlength="5" required>
+                            <input type="text" class="form-control" name="username" placeholder="username" id="username" minlength="4" required>
                             
                         </div>
                         <div class="input-group form-group">
@@ -53,7 +53,7 @@
                             </div>
                             <input type="password" class="form-control" name="password" placeholder="password" id="password" minlength="5" required>
                         </div>
-                        <div class="d-flex justify-content-center">
+                        <div class="error d-flex justify-content-center">
                             <?php echo $_SESSION["login-error"] ?>
                         </div>
                         <div class="d-flex justify-content-center">

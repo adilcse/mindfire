@@ -1,0 +1,9 @@
+.about-body{
+min-height: 450px;
+}
+.bodytext{
+    font-family: 'Droid Sans', sans-serif;
+    color: #000000;
+   margin: 20px     ;
+    text-align: justify;
+}

@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css?family=Numans');
 
 html,body{
-background-image: url('https://i.ytimg.com/vi/x21BTgiZQSM/maxresdefault.jpg');
+background-image: url('https://previews.123rf.com/images/peshkov/peshkov1903/peshkov190300838/118913627-creative-circuit-chip-wallpaper-ai-and-computing-concept-3d-rendering.jpg');
 background-size: cover;
 background-repeat: no-repeat;
 height: 100%;
@@ -19,11 +19,11 @@ height: 370px;
 margin-top: auto;
 margin-bottom: auto;
 width: 400px;
-background-color:rgb(202, 154, 230) ;
+background-color:rgba(0, 0, 0, .5) ;
 }
 
 .card-header h3{
-color: black;
+color: white;
 }
 
 .social_icon{
@@ -44,7 +44,10 @@ outline: 0 0 0 0  ;
 box-shadow:12px 12px 2px 1px rgba(0, 0, 255, .2);;
 
 }
-
+.error{
+    color: red;
+    font-size: large;
+}
 
 
 .login_btn{
@@ -70,3 +73,6 @@ background-color: white;
     color: black;
     background-color: white;
     }
+.card-footer{
+    color: white;
+}

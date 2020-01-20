@@ -2,6 +2,8 @@
     min-height: 460px;
     margin-top: 50px;
 }
-.age{
-    max-width: 100px;
+
+.error{
+    display: inline-block;
+    text-align: center;
 }

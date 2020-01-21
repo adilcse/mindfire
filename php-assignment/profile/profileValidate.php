@@ -51,6 +51,7 @@ session_start();
 
     }  
     function set_all_cookie(){
+
         setcookie("username", $_SESSION["username"], time() + (86400 * 30), "/");
         $name=test_input($_POST["name"]);
         if(!$name){
@@ -76,7 +77,7 @@ session_start();
     }  
 
     function verifyImage(){
-       
+       return false;
 
         if(isset($_POST["upload"])){
             $allowed_image_extension = array(
@@ -117,13 +118,13 @@ session_start();
                 }
             }
 
-            
         }else{
             return false;
         }
     }
 
     function verifyResume(){
+        return false;
         if(isset($_POST["upload"])){
             $allowed_image_extension = array(
                 "pdf",

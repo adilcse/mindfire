@@ -15,7 +15,7 @@ session_start();
                         set_all_cookie();
                     }
                 else{
-                    set_validity("invalid image.");
+                    set_validity("Somthing went wrong.");
                 } 
             }
             elseif($_POST["changeResume"]=="true"){

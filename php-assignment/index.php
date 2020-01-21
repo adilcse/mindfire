@@ -55,7 +55,7 @@ $home="active";
             </table>
       </div>
        
-    <?php include("/footer/footer.php"); ?>
+    <?php include("footer/footer.php"); ?>
   
   
 </body>

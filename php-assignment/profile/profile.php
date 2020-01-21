@@ -16,7 +16,7 @@
     <?php include("../header/header.php");
     $skills=unserialize($_COOKIE['skills']);
     if(isset($_COOKIE['image']))
-       $img="http://other.com/profileImages/".$_COOKIE['image'];
+       $img="/profileImages/".$_COOKIE['image'];
     else
        $img="https://banner2.cleanpng.com/20180521/ocp/kisspng-computer-icons-user-profile-avatar-french-people-5b0365e4f1ce65.9760504415269493489905.jpg";
     $java=$c=$html=$python=$css='';
@@ -40,7 +40,7 @@
         }
 	}
 	if(isset($_COOKIE["resume"])){
-		$resume_link="http://other.com/profileResume/".$_COOKIE['resume'];
+		$resume_link="/profileResume/".$_COOKIE['resume'];
 	}
 	else{
 		$resume_link="#";

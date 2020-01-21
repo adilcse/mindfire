@@ -32,7 +32,7 @@ session_start();
     }
     
     function set_validity($errvalue,$type="true"){
-        header("Location: http://other.com/profile/profile.php?error=".$type."&msg=".$errvalue);
+        header("Location: /profile/profile.php?error=".$type."&msg=".$errvalue);
         exit(); 
     }
     function test_input($data) {

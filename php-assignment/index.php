@@ -2,7 +2,7 @@
 session_start();
 if($_GET["logout"]){
     session_destroy();
-    header("Location: http://other.com/login.php"); 
+    header("Location: /login.php"); 
 }
 
 $home="active";
@@ -55,14 +55,14 @@ $home="active";
             </table>
       </div>
        
-    <?php include("footer/footer.php"); ?>
+    <?php include("/footer/footer.php"); ?>
   
   
 </body>
 <?php
 if($_GET["logout"]){
     session_destroy();
-    header("Location: http://other.com/login.php"); 
+    header("Location: /login.php"); 
 }
 
 ?>

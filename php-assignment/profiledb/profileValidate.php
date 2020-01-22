@@ -105,9 +105,9 @@ session_start();
                
             }  
             else {
-                $target = "../profileImages/" . substr($_FILES["avatar"]["tmp_name"],5);
+                $target = "../profileImages/" .$_FILES["avatar"]["tmp_name"];
                 if (move_uploaded_file($_FILES["avatar"]["tmp_name"], $target)) {
-                    setcookie("image",substr($_FILES["avatar"]["tmp_name"],5), time() + (86400 * 30), "/");
+                    setcookie("image",$_FILES["avatar"]["tmp_name"], time() + (86400 * 30), "/");
                     return true;
                 } else {
                     echo "error";

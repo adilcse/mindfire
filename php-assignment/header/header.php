@@ -18,7 +18,7 @@ $username=$_SESSION["username"] ;
   <div class="header-right">
     
     <a class="<?php echo $home ;?>" href="/">Home</a>
-    <a class="<?php echo $profile ;?>" href="/profile/profile.php">profile</a>
+    <a class="<?php echo $profile ;?>" href="/profiledb/profile.php">profile</a>
     <a class="<?php echo $about ;?>" href="/about/about.php">About</a>
     <a  href="/index.php?logout=true">Logout</a>
   </div>

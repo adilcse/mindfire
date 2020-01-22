@@ -1,5 +1,5 @@
 <?php
-
+include('../databaseConnect.php');
 session_start();
     if(!empty($_POST)){
         ini_set('display_errors', 1);
@@ -12,27 +12,27 @@ session_start();
             if(!empty($_POST["changeImage"]) && $_POST["changeImage"]=="true"){
                 if(verifyImage())
                     {
-                        set_all_cookie();
+                        addToDb();
                     }
                 else{
                     set_validity("invalid image.");
                 } 
             }
-            elseif($_POST["changeResume"]=="true"){
+            elseif(!empty($_POST["changeResume"])){
                 if(verifyResume())
                 {
-                    set_all_cookie();
+                    addToDb();
                 }
             }
              else 
-                  set_all_cookie();
+                  addToDb();
         }
     }else{
         set_validity("profile","edit");
     }
     
     function set_validity($errvalue,$type="true"){
-        header("Location: /profile/profile.php?error=".$type."&msg=".$errvalue);
+        header("Location: /profiledb/profile.php?error=".$type."&msg=".$errvalue);
         exit(); 
     }
     function test_input($data) {
@@ -50,30 +50,53 @@ session_start();
         }
 
     }  
-    function set_all_cookie(){
-        setcookie("username", $_SESSION["username"], time() + (86400 * 30), "/");
-        $name=test_input($_POST["name"]);
-        if(!$name){
-            set_validity("enter valid name");
-        }else
-             setcookie("name", $name, time() + (86400 * 30), "/");
-        $email=test_input($_POST["email"]);
-        setcookie("email", $email, time() + (86400 * 30), "/");
-        $mobileno=test_input($_POST["mobileno"]);
-        setcookie("mobilenumber", $mobileno, time() + (86400 * 30), "/");
-        $age= $_POST["age"];
-        setcookie("age", $age, time() + (86400 * 30), "/");
-        $gender=$_POST["gender"];
-        if($gender == 'male' || $gender== 'female')
-            setcookie("gender", $gender, time() + (86400 * 30), "/");
-        else
-            set_validity("enter valid gender");
-        $state=test_input($_POST["state"]);
-        setcookie("state", $state, time() + (86400 * 30), "/");
-        $skills=$_POST["skills"];
-        setcookie("skills",serialize($skills), time() + (86400 * 30), "/");
-        set_validity("updated successfully.","false");
+    function addToDb(){
+        include('../databaseConnect.php');
+        $name=$_POST['name'];
+        $age=$_POST['age'];
+        $email=$_POST['email'];
+        $sex=$_POST['gender'];
+        $mobile=$_POST['mobileno'];
+        $state=$_POST['state'];
+        $userid=$_SESSION['uid'];
+        $stateId=intval($_POST['state']);
+        //check user exist or not
+        $sql="SELECT id FROM users where id = '$userid ' LIMIT 1;";
+        $result = $conn->query($sql);
+        if ($result->num_rows > 0) {
+         while($row = $result->fetch_assoc()) {
+           $sql="UPDATE TABLE users SET first_name='$name',
+                                        age=$age,
+                                        email='$email',
+                                        mobile_number='$mobile',
+                                        sex='$sex',
+                                        state_id=$stateId
+                                        WHERE id= '$userid';";
+             if ($conn->query($sql) === TRUE) {
+                //update skill table
+            set_validity("Successfully updated","false");
+            } else {
+                set_validity( $conn->error);
+                
+            }
+         }
+
+        } else{
+            die($conn->error);
+        // update user table
+            $sql="INSERT INTO users(id,prefix,first_name,age,email,mobile_number,sex,state_id,created_on) VALUES
+            ('$userid','Mr','$name',$age,'$email','$mobile','$sex',$stateId,NOW());
+            ";
+            if ($conn->query($sql) === TRUE) {
+                //update skill table
+            set_validity("Successfully updated","false");
+            } else {
+                set_validity( $conn->error);
+                
+            }
+        }
     }  
+
 
     function verifyImage(){
        

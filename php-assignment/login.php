@@ -12,23 +12,34 @@
 <body>
     <?php
     session_start();
+    include('databaseConnect.php');
     if (!empty($_POST))
     {
         $uid=$_POST["username"];
         $password=$_POST["password"];
-        if($uid==="adil" && $password === "mindfire"){
+       $sql="SELECT user_name,password,id from user_credentials WHERE user_name='$uid' LIMIT 1;";
+       $result = $conn->query($sql);
+       if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+            if($uid === $row["user_name"] && password_verify($password, $row["password"])){
+                $_SESSION["uid"]=$row["id"];
                 $_SESSION["username"]=$uid;
                 $_SESSION["LoggedIn"]=true;
                 $_SESSION["login-error"]=NULL;
                 header("Location: /index.php"); 
-              
-                
-        }
-        else{
+            }
+           else{
             $_SESSION["username"]=NULL;
             $_SESSION["LoggedIn"]=false;
             $_SESSION["login-error"]="username or password incorrect";
+           }
+            
         }
+    } else {
+        $_SESSION["username"]=NULL;
+        $_SESSION["LoggedIn"]=false;
+        $_SESSION["login-error"]="username not exist";
+    }
     }
     ?>
     <div class="container">

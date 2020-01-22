@@ -64,18 +64,16 @@ session_start();
         $sql="SELECT id FROM users where id = '$userid ' LIMIT 1;";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
+
          while($row = $result->fetch_assoc()) {
-           $sql="UPDATE TABLE users SET first_name='$name',
-                                        age=$age,
-                                        email='$email',
-                                        mobile_number='$mobile',
-                                        sex='$sex',
-                                        state_id=$stateId
-                                        WHERE id= '$userid';";
+            
+           $sql="UPDATE users SET first_name='$name', age=$age, email='$email', mobile_number='$mobile',sex='$sex',state_id='$stateId', modified_on=NOW() WHERE id = $userid;";
              if ($conn->query($sql) === TRUE) {
                 //update skill table
+                
             set_validity("Successfully updated","false");
             } else {
+               
                 set_validity( $conn->error);
                 
             }

@@ -11,7 +11,7 @@ $username=$_SESSION["username"] ;
 ?>
 </style>
 <div class="header">
-  <a href="/" class="logo"><img src="logo.jpg" width="150px" height="80px">
+  <a href="/" class="logo"><img src="/header/logo.jpg" width="150px" height="80px">
 <div class="welcome-msg"></div>
 </a>
   

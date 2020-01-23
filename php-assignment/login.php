@@ -17,7 +17,9 @@
     {
         $uid=$_POST["username"];
         $password=$_POST["password"];
+        
        $sql="SELECT user_name,password,id from user_credentials WHERE user_name='$uid' LIMIT 1;";
+    //    var_dump($sql);die();
        $result = $conn->query($sql);
        if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {

@@ -17,13 +17,25 @@
      include("../databaseConnect.php");
      $name=$email=$mobile_number=$age=$gender=$state='';
      if(!empty($_SESSION['uid'])){
-      $sql="SELECT * FROM users";
-      $result = $conn->query($sql);
-      if ($result->num_rows > 0) {
-       while($row = $result->fetch_assoc()) {
+      $sql="SELECT users.first_name,users.email,users.mobile_number,users.age,users.sex,states.state_id  
+            FROM users INNER JOIN states ON users.state_id = states.state_id WHERE users.id=".$_SESSION['uid'].";";
+       try{
+        $result = $conn->query($sql);
+        
+        if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+          $name=$row['first_name'];
+          $email=$row['email'];
+          $mobile_number=$row['mobile_number'];
+          $gender=$row['sex'];
+          $state=$row['state_id'];
+          $age=$row['age'];
 
-
-       }
+        }
+        
+        }
+      }catch(Exception $e){
+        die($conn->error);
       }
      }
     
@@ -55,12 +67,12 @@
                           </div>
                         <div class="form-group">
                           <label for="name">Your Name</label>
-                          <input type="text" class="form-control" id="name" name="name" value="<?php echo $_COOKIE['name'] ;?>" >
+                          <input type="text" class="form-control" id="name" name="name" value="<?php echo $name ;?>" >
                          
                         </div>
                         <div class="form-group">
                             <label for="email">Email address</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" value="<?php echo $_COOKIE['email'] ;?>"  required>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" value="<?php echo $email ;?>"  required>
                           </div>
                           <div class="form-group">
                           <label class="" for="mobileno">Mobile number</label>
@@ -68,24 +80,24 @@
                                 <div class="input-group-prepend">
                                 <div class="input-group-text">+91</div>
                                 </div>
-                                <input type="text" class="form-control" name="mobileno" id="mobileno" placeholder="mobile number" pattern="[789][0-9]{9}" value="<?php echo $_COOKIE['mobilenumber'] ;?>" required>
+                                <input type="text" class="form-control" name="mobileno" id="mobileno" placeholder="mobile number" pattern="[789][0-9]{9}" value="<?php echo $mobile_number ;?>" required>
                             </div>  
                           </div>
                         <div class="row">
                             <div class="form-group col-md-4">
                                 <label for="username">Age</label>
-                                <input type="number" name="age" class="form-control" id="age" min="20" max="30" value="<?php echo $_COOKIE['age'] ;?>" required>
+                                <input type="number" name="age" class="form-control" id="age" min="20" max="30" value="<?php echo $age ;?>" required>
                             </div>
                             <div class="form-group col-md-7 ">
                                 <label >Gender</label><br>
                                 <div class="form-check form-check-inline" >
-                                    <input class="form-check-input" type="radio" name="gender" id="gender-m" value="M" checked <?php if($_COOKIE['gender']=='male') echo 'checked'; ?>>
+                                    <input class="form-check-input" type="radio" name="gender" id="gender-m" value="M" checked <?php if($gender=='M') echo 'checked'; ?>>
                                     <label class="form-check-label" for="gender-m">
                                       Male
                                     </label>
                                   </div>
                                   <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="gender" id="gender-f" value="F" <?php if($_COOKIE['gender']=='female') echo 'checked'; ?>>
+                                    <input class="form-check-input" type="radio" name="gender" id="gender-f" value="F" <?php if($gender=='F') echo 'checked'; ?>>
                                     <label class="form-check-label" for="gender-f">
                                      Female
                                     </label>
@@ -101,7 +113,12 @@
                               $result = $conn->query($sql);
                               if ($result->num_rows > 0) {
                                while($row = $result->fetch_assoc()) {
-                               echo "<option value='".$row['state_id']."' name = 'state' >".$row['state_name']."</option>";
+                                 $is_selected ='';
+                                if($row['state_id'] == $state) 
+                                  $is_selected='selected';
+                               echo "<option value='".$row['state_id']."' ".
+                                  $is_selected
+                               ." name = 'state' >".$row['state_name']."</option>";
                                }
                               }
                               ?>

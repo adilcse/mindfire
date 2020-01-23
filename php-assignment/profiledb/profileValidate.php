@@ -33,6 +33,7 @@ session_start();
     
     function set_validity($errvalue,$type="true"){
         header("Location: /profiledb/profile.php?error=".$type."&msg=".$errvalue);
+        $conn -> close();
         exit(); 
     }
     function test_input($data) {
@@ -60,6 +61,7 @@ session_start();
         $state=$_POST['state'];
         $userid=$_SESSION['uid'];
         $stateId=intval($_POST['state']);
+        
         //check user exist or not
         $sql="SELECT id FROM users where id = '$userid ' LIMIT 1;";
         $result = $conn->query($sql);
@@ -67,10 +69,16 @@ session_start();
 
          while($row = $result->fetch_assoc()) {
             
-           $sql="UPDATE users SET first_name='$name', age=$age, email='$email', mobile_number='$mobile',sex='$sex',state_id='$stateId', modified_on=NOW() WHERE id = $userid;";
+           $sql="UPDATE users SET first_name='$name', age=$age, email='$email', mobile_number='$mobile',sex='$sex',state_id='$stateId' WHERE id = $userid;";
              if ($conn->query($sql) === TRUE) {
                 //update skill table
-                
+               $skills= $_POST["skills"];
+               foreach($skills as $skill){
+                   //work from here tomorrow
+                $sql="";
+                if ($conn->query($sql) === TRUE) {
+                }
+               }
             set_validity("Successfully updated","false");
             } else {
                
@@ -80,13 +88,14 @@ session_start();
          }
 
         } else{
-            die($conn->error);
+        
         // update user table
             $sql="INSERT INTO users(id,prefix,first_name,age,email,mobile_number,sex,state_id,created_on) VALUES
             ('$userid','Mr','$name',$age,'$email','$mobile','$sex',$stateId,NOW());
             ";
             if ($conn->query($sql) === TRUE) {
                 //update skill table
+
             set_validity("Successfully updated","false");
             } else {
                 set_validity( $conn->error);

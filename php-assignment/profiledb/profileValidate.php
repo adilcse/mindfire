@@ -1,5 +1,6 @@
 <?php
 include('../databaseConnect.php');
+
 session_start();
     if(!empty($_POST)){
         ini_set('display_errors', 1);
@@ -58,27 +59,50 @@ session_start();
         $email=$_POST['email'];
         $sex=$_POST['gender'];
         $mobile=$_POST['mobileno'];
-        $state=$_POST['state'];
         $userid=$_SESSION['uid'];
         $stateId=intval($_POST['state']);
         
         //check user exist or not
-        $sql="SELECT id FROM users where id = '$userid ' LIMIT 1;";
-        $result = $conn->query($sql);
+        $sql="SELECT id FROM users where id = ? LIMIT 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s",$userid);
+        $stmt->execute();   
+       $result = $stmt->get_result();
         if ($result->num_rows > 0) {
 
          while($row = $result->fetch_assoc()) {
             
-           $sql="UPDATE users SET first_name='$name', age=$age, email='$email', mobile_number='$mobile',sex='$sex',state_id='$stateId' WHERE id = $userid;";
-             if ($conn->query($sql) === TRUE) {
-                //update skill table
-               $skills= $_POST["skills"];
-               foreach($skills as $skill){
-                   //work from here tomorrow
-                $sql="";
-                if ($conn->query($sql) === TRUE) {
+           $sql="UPDATE users SET first_name=?, age=?, email=?, mobile_number=?,sex=?,state_id=? WHERE id = ?;";
+           $stmt = $conn->prepare($sql);
+           $stmt->bind_param("sisssii",$name,$age,$email,$mobile,$sex,$stateId,$userid); 
+           if ($stmt->execute() === TRUE) { 
+               //select total skills available
+               $total_skills_aray = $conn->query("SELECT skill_id FROM user_skills WHERE user_id = $userid");
+               $total_skill=[];
+                while($skl = $total_skills_aray->fetch_assoc()){
+                   array_push($total_skill,$skl['skill_id']);
                 }
+              
+                //add skill table
+                $sql_insert="INSERT IGNORE INTO user_skills(user_id,skill_id) VALUES(?,?)";  
+                $sql_delete="DELETE FROM user_skills WHERE user_id= ? AND skill_id = ?";  
+                $stmt_insert=$conn->prepare($sql_insert);
+                $stmt_delete=$conn->prepare($sql_delete);
+               $skills= $_POST["skills"];
+               $un_selected=array_diff($total_skill,$skills);
+               $new_selected = array_diff($skills,$total_skill);
+              
+               foreach($new_selected as $skill){
+                $stmt_insert->bind_param("ii",$userid,$skill);
+                $stmt_insert->execute();     
                }
+               foreach($un_selected as $skill){
+                   $stmt_delete->bind_param("ii",$userid,$skill);
+                   $stmt_delete->execute();
+               }
+             
+
+             
             set_validity("Successfully updated","false");
             } else {
                
@@ -106,7 +130,7 @@ session_start();
 
 
     function verifyImage(){
-       
+     
 
         if(isset($_POST["upload"])){
             $allowed_image_extension = array(
@@ -135,13 +159,29 @@ session_start();
                
             }  
             else {
-                $target = "../profileImages/" .$_FILES["avatar"]["tmp_name"];
+                $image_name = substr($_FILES["avatar"]["tmp_name"],strripos($_FILES["avatar"]["tmp_name"],"/")+1);
+                $image_address = "/profileImages/".$image_name;
+                $target = "..".$image_address;
+                $sql="SELECT image_address FROM users WHERE id=?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("i",$_SESSION['uid']);
+                $stmt->execute();   
+               $result = $stmt->get_result()->fetch_assoc();
+              
                 if (move_uploaded_file($_FILES["avatar"]["tmp_name"], $target)) {
-                    setcookie("image",$_FILES["avatar"]["tmp_name"], time() + (86400 * 30), "/");
-                    return true;
+                    unlink("..".$result['image_address']); 
+                    $sql="UPDATE users SET image_address = ? WHERE id = ?;";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("si",$image_address,$_SESSION['uid']); 
+                    if ($stmt->execute() === TRUE) { 
+                        return true;
+                    }
+                    else{
+                       set_validity("problem in image uploading.");
+                       return false;
+                    }            
                 } else {
-                    echo "error";
-                    exit();
+                   
                    set_validity("problem in uploading.");
                    return false;
                 }
@@ -154,6 +194,7 @@ session_start();
     }
 
     function verifyResume(){
+        include('../databaseConnect.php'); 
         if(isset($_POST["upload"])){
             $allowed_image_extension = array(
                 "pdf",
@@ -179,16 +220,35 @@ session_start();
                
             }  
             else {
-                $target = "../profileResume/" . basename($tempname);
+
+                //mysql
+                $resume_name = substr($_FILES["resume"]["tmp_name"],strripos($_FILES["resume"]["tmp_name"],"/")+1);
+                $resume_address = "/profileResume/".$resume_name;
+                $target = "..".$resume_address;
+                $sql="SELECT resume_address FROM users WHERE id=?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("i",$_SESSION['uid']);
+                $stmt->execute();   
+               $result = $stmt->get_result()->fetch_assoc();
+              
                 if (move_uploaded_file($_FILES["resume"]["tmp_name"], $target)) {
-                    setcookie("resume",basename($tempname), time() + (86400 * 30), "/");
-                    return true;
+                    unlink("..".$result['resume_address']); 
+                    $sql="UPDATE users SET resume_address = ? WHERE id = ?;";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("si",$resume_address,$_SESSION['uid']); 
+                    if ($stmt->execute() === TRUE) { 
+                        return true;
+                    }
+                    else{
+                       set_validity("problem in resume uploading.");
+                       return false;
+                    }            
                 } else {
-                    echo "error";
-                    exit();
-                   set_validity("problem in uploading document.");
+                   
+                   set_validity("problem in uploading.");
                    return false;
                 }
+
             }
         }
             else{

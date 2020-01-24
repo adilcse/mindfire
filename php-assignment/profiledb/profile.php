@@ -15,13 +15,16 @@
 <body>
     <?php include("../header/header.php");
      include("../databaseConnect.php");
-     $name=$email=$mobile_number=$age=$gender=$state='';
+     $name=$email=$mobile_number=$age=$gender=$img=$state='';
      if(!empty($_SESSION['uid'])){
-      $sql="SELECT users.first_name,users.email,users.mobile_number,users.age,users.sex,states.state_id  
-            FROM users INNER JOIN states ON users.state_id = states.state_id WHERE users.id=".$_SESSION['uid'].";";
+      $sql="SELECT users.first_name,users.email,users.mobile_number,users.age,users.sex,users.image_address,states.state_id  
+            FROM users INNER JOIN states ON users.state_id = states.state_id WHERE users.id=?";
        try{
-        $result = $conn->query($sql);
-        
+        // $result = $conn->query($sql);
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s",$_SESSION['uid']);
+        $stmt->execute();   
+       $result = $stmt->get_result();
         if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
           $name=$row['first_name'];
@@ -30,7 +33,7 @@
           $gender=$row['sex'];
           $state=$row['state_id'];
           $age=$row['age'];
-
+          $img = $row['image_address'];
         }
         
         }
@@ -131,13 +134,30 @@
                           <div class="">
                             <label >Skills</label><br>
                             <?php
-                                $sql="SELECT * FROM skills;";
+                                $sql="SELECT id,skill FROM skills;";
+                                $sql_skills = "SELECT skill_id from user_skills WHERE user_id= ?;";
+                                $stmt_skill = $conn->prepare($sql_skills);
+                                $stmt_skill->bind_param("i",$_SESSION['uid']);
+                                $stmt_skill->execute();   
+                                $result_skill = $stmt_skill->get_result();
+                                $selected_skills =[];
+                               while($skl = $result_skill->fetch_assoc())
+                                { 
+                                  array_push($selected_skills,$skl['skill_id']); 
+                                }
+                             
+                           
                                 $result = $conn->query($sql);
                                 if ($result->num_rows > 0) {
                                  while($row = $result->fetch_assoc()) {
+                                   $check='';
+                                   if(in_array($row["id"],$selected_skills)){
+                                    $check ="checked";
+                                   
+                                   }
                                   echo  '<div class="form-check form-check-inline">
-                                  <input class="form-check-input" type="checkbox" name="skills[]" id="'.$row["skill"].'" value="'.$row["id"].'">
-                                  <label class="form-check-label" for="'.$row["skill"].'">'.$row["skill"].'</label>
+                                  <input class="form-check-input" type="checkbox" '.$check.' name="skills[]" id="'.$row["skill"].'" value="'.$row["id"].'">
+                                  <label class="form-check-label"  for="'.$row["skill"].'">'.$row["skill"].'</label>
                                 </div>';
                                  }
                                 } 
@@ -151,7 +171,7 @@
                  <div class="col-md-6">
                    <div class="row ">
                      <div class="col">
-                    <img src=<?php echo $img?> width="200px" height="200px" class="rounded mx-auto d-block" alt="avatar" id="profilepic">
+                    <img src='<?php echo $img?>'  width="200px" height="200px" class="rounded mx-auto d-block" alt="avatar" id="profilepic">
                      </div>
                      <div class="co text-center">
                     <div class="form-check ">

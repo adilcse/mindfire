@@ -15,9 +15,9 @@
 <body>
     <?php include("../header/header.php");
      include('dbConnectpdo.php');
-     $name=$email=$mobile_number=$age=$gender=$img=$state='';
+     $name=$email=$mobile_number=$age=$gender=$img=$resume_link=$state='';
      if(!empty($_SESSION['uid'])){
-      $sql="SELECT users.first_name,users.email,users.mobile_number,users.age,users.sex,users.image_address,states.state_id  
+      $sql="SELECT users.first_name,users.email,users.mobile_number,users.age,users.sex,users.image_address,users.resume_address,states.state_id  
             FROM users INNER JOIN states ON users.state_id = states.state_id WHERE users.id=? LIMIT 1";
        try{
       
@@ -32,7 +32,8 @@
           $gender=$result['sex'];
           $state=$result['state_id'];
           $age=$result['age'];
-          $img = $result['image_address'];
+		  $img = $result['image_address'];
+		  $resume_link=$result['resume_address'];
         
         
         }
@@ -113,21 +114,31 @@
                             <select class="custom-select" id="validationCustom04" name="state" required>
                             <option value='0' disabled selected>--select--</option>
                               <?php
-                              $sql="SELECT * FROM states;";
-                              echo ($sql);
-                              $stmt=$conn->prepare($sql);
-                              $stmt->execute();
-                              $result =$stmt->fetch();
-                              var_dump($stmt);
-                              if ($result) {
                               
-                                 $is_selected ='';
-                                if($result['state_id'] == $state) 
-                                  $is_selected='selected';
-                               echo "<option value='".$result['state_id']."' ".
-                                  $is_selected
-                               ." name = 'state' >".$result['state_name']."</option>";                               
+
+                               $sql="SELECT * FROM states;";
+                               
+                              try{
+                               
+                                $stmt=$conn->prepare($sql);
+                                $stmt->execute();
+                               
+                                
+                                while( $result =$stmt->fetch()){
+                                  if ($result) {
+                                    $is_selected ='';
+                                   if($result['state_id'] == $state) 
+                                     $is_selected='selected';
+                                  echo "<option value='".$result['state_id']."' ".
+                                     $is_selected
+                                  ." name = 'state' >".$result['state_name']."</option>";                               
+                                 }
+                                }
+                               
+                              }catch(Exception $e){
+                                echo $conn->error ; 
                               }
+                             
                               ?>
                               
                             </select>
@@ -138,22 +149,25 @@
                           <div class="">
                             <label >Skills</label><br>
                             <?php
+                           
                                 $sql="SELECT id,skill FROM skills;";
                                 $sql_skills = "SELECT skill_id from user_skills WHERE user_id= ?;";
                                 $stmt_skill = $conn->prepare($sql_skills);
-                                $stmt_skill->bind_param("i",$_SESSION['uid']);
-                                $stmt_skill->execute();   
-                                $result_skill = $stmt_skill->get_result();
+                               
+                                $stmt_skill->execute([$_SESSION['uid']]);   
+                                
                                 $selected_skills =[];
-                               while($skl = $result_skill->fetch_assoc())
+                               while($skl = $stmt_skill->fetch())
                                 { 
+                                
                                   array_push($selected_skills,$skl['skill_id']); 
                                 }
                              
-                           
-                                $result = $conn->query($sql);
-                                if ($result->num_rows > 0) {
-                                 while($row = $result->fetch_assoc()) {
+                                $all_skills=$conn->prepare($sql);
+                                 $all_skills->execute();
+                                
+                                 while($row = $all_skills->fetch()) {
+                                
                                    $check='';
                                    if(in_array($row["id"],$selected_skills)){
                                     $check ="checked";
@@ -163,7 +177,7 @@
                                   <input class="form-check-input" type="checkbox" '.$check.' name="skills[]" id="'.$row["skill"].'" value="'.$row["id"].'">
                                   <label class="form-check-label"  for="'.$row["skill"].'">'.$row["skill"].'</label>
                                 </div>';
-                                 }
+                                 
                                 } 
                             ?>
                            
@@ -190,9 +204,9 @@
                       Please select an image of size less then 1MB.
                     </div>
                     <div class="resume-img">
-
+							
 					
-						<a href=<?php echo $resume_link; ?>>
+						<a href = "<?php echo $resume_link; ?>">
 							<img src="https://img.icons8.com/plasticine/2x/resume.png" width="200px"  height="200px">
 						</a>
 						<div class="form-check ">
@@ -202,7 +216,7 @@
 						  <div class="imagebox-center">
 				 <input type="file" name="resume"   accept="application/pdf" onchange="setResume(this)">
 				 <div class="alert alert-success text-center" role="alert" id="resume_available" <?php 
-					if($resume_link == "#") echo 'hidden';
+					if($resume_link == NULL) echo 'hidden';
 					?>>
                       Resume available.
 					</div>
@@ -215,7 +229,7 @@
                  </div>
                 </div>         
             </div>
-            <div class="row">
+                    <div class="row justify-center">
                        <div class="text-center">
                         <button type="submit" name="upload" class="btn btn-primary">Save</button>
                         <button type="reset" class="btn btn-primary">Clear</button>

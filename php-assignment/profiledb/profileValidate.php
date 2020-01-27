@@ -1,6 +1,5 @@
 <?php
-include('../databaseConnect.php');
-
+include('dbConnectpdo.php');
 session_start();
     if(!empty($_POST)){
         ini_set('display_errors', 1);
@@ -29,7 +28,8 @@ session_start();
                   addToDb();
         }
     }else{
-        set_validity("profile","edit");
+        session_destroy();
+    header("Location: /login.php"); 
     }
     
     function set_validity($errvalue,$type="true"){
@@ -53,7 +53,8 @@ session_start();
 
     }  
     function addToDb(){
-        include('../databaseConnect.php');
+        $DB = DataBaseConnecter::getInstance(); 
+        $conn = $DB->getConnect();
         $name=$_POST['name'];
         $age=$_POST['age'];
         $email=$_POST['email'];
@@ -65,24 +66,20 @@ session_start();
         //check user exist or not
         $sql="SELECT id FROM users where id = ? LIMIT 1";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s",$userid);
-        $stmt->execute();   
-       $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-
-         while($row = $result->fetch_assoc()) {
+        $stmt->execute([$userid]);   
+         if($row = $stmt->fetch()) {
             
            $sql="UPDATE users SET first_name=?, age=?, email=?, mobile_number=?,sex=?,state_id=? WHERE id = ?;";
            $stmt = $conn->prepare($sql);
-           $stmt->bind_param("sisssii",$name,$age,$email,$mobile,$sex,$stateId,$userid); 
-           if ($stmt->execute() === TRUE) { 
+           if ($stmt->execute([$name,$age,$email,$mobile,$sex,$stateId,$userid]) === TRUE) { 
                //select total skills available
-               $total_skills_aray = $conn->query("SELECT skill_id FROM user_skills WHERE user_id = $userid");
+               $total_skills_aray = $conn->prepare("SELECT skill_id FROM user_skills WHERE user_id = $userid");
+               $total_skills_aray->execute();
                $total_skill=[];
-                while($skl = $total_skills_aray->fetch_assoc()){
+                while($skl = $total_skills_aray->fetch()){
                    array_push($total_skill,$skl['skill_id']);
                 }
-              
+             
                 //add skill table
                 $sql_insert="INSERT IGNORE INTO user_skills(user_id,skill_id) VALUES(?,?)";  
                 $sql_delete="DELETE FROM user_skills WHERE user_id= ? AND skill_id = ?";  
@@ -93,15 +90,11 @@ session_start();
                $new_selected = array_diff($skills,$total_skill);
               
                foreach($new_selected as $skill){
-                $stmt_insert->bind_param("ii",$userid,$skill);
-                $stmt_insert->execute();     
+                $stmt_insert->execute([$userid,$skill]);     
                }
                foreach($un_selected as $skill){
-                   $stmt_delete->bind_param("ii",$userid,$skill);
-                   $stmt_delete->execute();
+                   $stmt_delete->execute([$userid,$skill]);
                }
-             
-
              
             set_validity("Successfully updated","false");
             } else {
@@ -109,15 +102,14 @@ session_start();
                 set_validity( $conn->error);
                 
             }
-         }
-
-        } else{
-        
+        }
+        else{
         // update user table
             $sql="INSERT INTO users(id,prefix,first_name,age,email,mobile_number,sex,state_id,created_on) VALUES
             ('$userid','Mr','$name',$age,'$email','$mobile','$sex',$stateId,NOW());
             ";
-            if ($conn->query($sql) === TRUE) {
+            $stmt=$conn->prepare($sql); 
+            if ($stmt->execute() === TRUE) {
                 //update skill table
 
             set_validity("Successfully updated","false");
@@ -130,8 +122,8 @@ session_start();
 
 
     function verifyImage(){
-     
-
+        $DB = DataBaseConnecter::getInstance(); 
+        $conn = $DB->getConnect();
         if(isset($_POST["upload"])){
             $allowed_image_extension = array(
                 "png",
@@ -164,16 +156,14 @@ session_start();
                 $target = "..".$image_address;
                 $sql="SELECT image_address FROM users WHERE id=?";
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param("i",$_SESSION['uid']);
-                $stmt->execute();   
-               $result = $stmt->get_result()->fetch_assoc();
+                $stmt->execute([$_SESSION['uid']]);   
+               $result = $stmt->fetch();
               
                 if (move_uploaded_file($_FILES["avatar"]["tmp_name"], $target)) {
                     unlink("..".$result['image_address']); 
                     $sql="UPDATE users SET image_address = ? WHERE id = ?;";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("si",$image_address,$_SESSION['uid']); 
-                    if ($stmt->execute() === TRUE) { 
+                    $stmt = $conn->prepare($sql); 
+                    if ($stmt->execute([$image_address,$_SESSION['uid']])) { 
                         return true;
                     }
                     else{
@@ -194,7 +184,8 @@ session_start();
     }
 
     function verifyResume(){
-        include('../databaseConnect.php'); 
+        $DB = DataBaseConnecter::getInstance(); 
+        $conn = $DB->getConnect();
         if(isset($_POST["upload"])){
             $allowed_image_extension = array(
                 "pdf",
@@ -227,16 +218,14 @@ session_start();
                 $target = "..".$resume_address;
                 $sql="SELECT resume_address FROM users WHERE id=?";
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param("i",$_SESSION['uid']);
-                $stmt->execute();   
-               $result = $stmt->get_result()->fetch_assoc();
+                $stmt->execute([$_SESSION['uid']]);   
+               $result = $stmt->fetch();
               
                 if (move_uploaded_file($_FILES["resume"]["tmp_name"], $target)) {
                     unlink("..".$result['resume_address']); 
                     $sql="UPDATE users SET resume_address = ? WHERE id = ?;";
                     $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("si",$resume_address,$_SESSION['uid']); 
-                    if ($stmt->execute() === TRUE) { 
+                    if ($stmt->execute([$resume_address,$_SESSION['uid']]) === TRUE) { 
                         return true;
                     }
                     else{

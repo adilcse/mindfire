@@ -6,15 +6,15 @@
     private $dbport = "3306";
     private $dbname = "php_profile";
     private $charset = 'utf8' ;
-    private $username = "local";
-    private $password = "mindfire";
+    private $username = "admin";
+    private $password = "Mindfire";
 
 
         private static $obj;			
         private $conn;                     
         private final function __construct() { 
             try{
-                $this->conn = new PDO("mysql:host=$this->dbhost;port=$this->dbport;dbname=$this->dbname;charset=$this->charset", $this->username, $this->password);
+                $this->conn = new PDO("mysql:host=$this->dbhost;port=$this->dbport;dbname=$this->dbname", $this->username, $this->password);
                 $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 $this->conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             }   

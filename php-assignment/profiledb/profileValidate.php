@@ -33,9 +33,10 @@ session_start();
     }
     
     function set_validity($errvalue,$type="true"){
-        header("Location: /profiledb/profile.php?error=".$type."&msg=".$errvalue);
-        $conn -> close();
-        exit(); 
+        $_SESSION["profile-error"]=$type;
+        $_SESSION["profile-msg"]=$errvalue;
+        header("Location: /profiledb/profile.php");
+       
     }
     function test_input($data) {
         $data = trim($data);

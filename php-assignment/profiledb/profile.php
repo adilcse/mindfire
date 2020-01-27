@@ -49,14 +49,17 @@
         <div class="container">
          
                 <?php
-                    if($_GET["error"]=='true')
+                    if($_SESSION["profile-error"]=='true')
                     {
                         echo ' <div class="alert alert-danger text-center" role="alert">
-                        '.$_GET["msg"].' </div>';
-                    }else if($_GET['error']=='false'){
+                        '.$_SESSION["profile-msg"].' </div>';
+                    }else if($_SESSION['profile-error']=='false'){
                         echo ' <div class="alert alert-success text-center" role="alert">
-                        '.$_GET["msg"].' </div>';
-                    }
+                        '.$_SESSION["profile-msg"].' </div>';
+					}
+					$_SESSION["profile-error"]="none";
+					$_SESSION["profile-msg"]="none";
+					
                 ?>
            
               
@@ -65,7 +68,7 @@
                
                     <form method="POST" action="profileValidate.php" enctype="multipart/form-data">
                         <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-sm-6">
                         <div class="form-group">
                             <label for="username">User name</label>
                             <input type="text" class="form-control" id="username" name="username" value="<?php echo $_SESSION['username']?>" disabled>
@@ -186,12 +189,12 @@
                           </div>
                          
                  </div>
-                 <div class="col-md-6">
+                 <div class="col-md-6 col-sm-6">
                    <div class="row ">
                      <div class="col">
                     <img src='<?php echo $img?>'  width="200px" height="200px" class="rounded mx-auto d-block" alt="avatar" id="profilepic">
                      </div>
-                     <div class="co text-center">
+                     <div class="text-center">
                     <div class="form-check ">
                                 <input class="form-check-input" type="checkbox" name="changeImage" id="changeImage" value="true">
                                 <label class="form-check-label" for="changeImage">Change Image ?</label>

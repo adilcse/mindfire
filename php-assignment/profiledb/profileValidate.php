@@ -130,7 +130,7 @@ session_start();
 
 
     function verifyImage(){
-     
+        include('../databaseConnect.php'); 
 
         if(isset($_POST["upload"])){
             $allowed_image_extension = array(

@@ -64,7 +64,7 @@
            
               
            
-            <div class="row">
+            <div class="row main">
                
                     <form method="POST" action="profileValidate.php" enctype="multipart/form-data">
                         <div class="row">

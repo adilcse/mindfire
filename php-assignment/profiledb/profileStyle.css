@@ -1,6 +1,7 @@
 .profile-body{
     min-height: 460px;
     margin-top: 50px;
+    overflow: hidden;
 }
 
 .error{
@@ -12,4 +13,7 @@
 }
 .text-center{
     margin: auto;
+}
+.main{
+    overflow: hidden;
 }

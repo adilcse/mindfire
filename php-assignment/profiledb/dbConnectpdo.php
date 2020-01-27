@@ -1,20 +1,15 @@
 
 <?php 
     class DataBaseConnecter { 
-        
-    private $dbhost = "myawsdatabase.cgciww58dmdb.us-east-2.rds.amazonaws.com";
-    private $dbport = "3306";
-    private $dbname = "php_profile";
-    private $charset = 'utf8' ;
-    private $username = "admin";
-    private $password = "Mindfire";
-
-
+        private $servername = "localhost";
+        private $username = "root";
+        private $password = "Mindfire1";
+        private $db = "php_profile";
         private static $obj;			
         private $conn;                     
         private final function __construct() { 
             try{
-                $this->conn = new PDO("mysql:host=$this->dbhost;port=$this->dbport;dbname=$this->dbname", $this->username, $this->password);
+                $this->conn = new PDO("mysql:host=$this->servername;dbname=$this->db", $this->username, $this->password);
                 $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 $this->conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             }   

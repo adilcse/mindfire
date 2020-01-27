@@ -1,6 +1,6 @@
 <?php
     include("../profiledb/dbConnectpdo.php");
-    $username="example";
+    $username="example2";
     $password="testing";
     $password_hash=password_hash($password, PASSWORD_DEFAULT);
    

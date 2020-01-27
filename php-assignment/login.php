@@ -12,25 +12,41 @@
 <body>
     <?php
     session_start();
-    include('databaseConnect.php');
+     include('profiledb/dbConnectpdo.php');
+    
     if (!empty($_POST))
     {
         $uid=$_POST["username"];
         $password=$_POST["password"];
-        
-       $sql="SELECT user_name,password,id from user_credentials WHERE user_name=? LIMIT 1;";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s",$uid);
-        $stmt->execute();   
-       $result = $stmt->get_result();
-       if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-            if($uid === $row["user_name"] && password_verify($password, $row["password"])){
-                $_SESSION["uid"]=$row["id"];
+        if(strpos($uid,",") and strpos($uid,";") and strpos($uid,"-") and strpos($uid,"\'")){
+            $_SESSION["username"]=NULL;
+            $_SESSION["LoggedIn"]=false;
+            $_SESSION["login-error"]="username not exist";
+            header("Location: /login.php"); 
+           
+        } 
+        try{
+          
+            $sql="SELECT user_name,password,id from user_credentials WHERE user_name=? LIMIT 1;";
+            $stmt = $conn->prepare($sql);
+             
+            $stmt->execute([$uid]);  
+            
+          
+           
+        }catch(PDOException $e)
+        {
+        echo $sql . "<br>" . $e->getMessage();
+        exit();
+        }
+        $result =$stmt->fetch();
+        if($result){
+            if($uid == $result["user_name"] && password_verify($password, $result["password"])){
+                $_SESSION["uid"]=$result["id"];
                 $_SESSION["username"]=$uid;
                 $_SESSION["LoggedIn"]=true;
                 $_SESSION["login-error"]=NULL;
-                $conn->close();
+                $conn = null;
                 header("Location: /index.php"); 
             }
            else{
@@ -39,11 +55,11 @@
             $_SESSION["login-error"]="username or password incorrect";
            }
             
-        }
+        
     } else {
         $_SESSION["username"]=NULL;
         $_SESSION["LoggedIn"]=false;
-        $_SESSION["login-error"]="username not exist";
+        $_SESSION["login-error"]="username not exist 1";
     }
     }
     ?>

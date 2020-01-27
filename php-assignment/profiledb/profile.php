@@ -14,32 +14,33 @@
 </head>
 <body>
     <?php include("../header/header.php");
-     include("../databaseConnect.php");
+     include('dbConnectpdo.php');
      $name=$email=$mobile_number=$age=$gender=$img=$state='';
      if(!empty($_SESSION['uid'])){
       $sql="SELECT users.first_name,users.email,users.mobile_number,users.age,users.sex,users.image_address,states.state_id  
-            FROM users INNER JOIN states ON users.state_id = states.state_id WHERE users.id=?";
+            FROM users INNER JOIN states ON users.state_id = states.state_id WHERE users.id=? LIMIT 1";
        try{
-        // $result = $conn->query($sql);
+      
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s",$_SESSION['uid']);
-        $stmt->execute();   
-       $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-          $name=$row['first_name'];
-          $email=$row['email'];
-          $mobile_number=$row['mobile_number'];
-          $gender=$row['sex'];
-          $state=$row['state_id'];
-          $age=$row['age'];
-          $img = $row['image_address'];
-        }
+        $stmt->execute([$_SESSION['uid']]);   
+       $result = $stmt->fetch();
+        if ($result) {
+         
+          $name=$result['first_name'];
+          $email=$result['email'];
+          $mobile_number=$result['mobile_number'];
+          $gender=$result['sex'];
+          $state=$result['state_id'];
+          $age=$result['age'];
+          $img = $result['image_address'];
+        
         
         }
       }catch(Exception $e){
         die($conn->error);
       }
+     }else{
+      header("Location: ../login.php"); 
      }
     
     ?>
@@ -113,16 +114,19 @@
                             <option value='0' disabled selected>--select--</option>
                               <?php
                               $sql="SELECT * FROM states;";
-                              $result = $conn->query($sql);
-                              if ($result->num_rows > 0) {
-                               while($row = $result->fetch_assoc()) {
+                              echo ($sql);
+                              $stmt=$conn->prepare($sql);
+                              $stmt->execute();
+                              $result =$stmt->fetch();
+                              var_dump($stmt);
+                              if ($result) {
+                              
                                  $is_selected ='';
-                                if($row['state_id'] == $state) 
+                                if($result['state_id'] == $state) 
                                   $is_selected='selected';
-                               echo "<option value='".$row['state_id']."' ".
+                               echo "<option value='".$result['state_id']."' ".
                                   $is_selected
-                               ." name = 'state' >".$row['state_name']."</option>";
-                               }
+                               ." name = 'state' >".$result['state_name']."</option>";                               
                               }
                               ?>
                               

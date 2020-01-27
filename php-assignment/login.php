@@ -12,23 +12,55 @@
 <body>
     <?php
     session_start();
+     include('profiledb/dbConnectpdo.php');
+    
     if (!empty($_POST))
     {
         $uid=$_POST["username"];
         $password=$_POST["password"];
-        if($uid==="adil" && $password === "mindfire"){
+        if(strpos($uid,",") and strpos($uid,";") and strpos($uid,"-") and strpos($uid,"\'")){
+            $_SESSION["username"]=NULL;
+            $_SESSION["LoggedIn"]=false;
+            $_SESSION["login-error"]="username not exist";
+            header("Location: /login.php"); 
+           
+        } 
+        try{
+          
+            $sql="SELECT user_name,password,id from user_credentials WHERE user_name=? LIMIT 1;";
+            $stmt = $conn->prepare($sql);
+             
+            $stmt->execute([$uid]);  
+            
+          
+           
+        }catch(PDOException $e)
+        {
+        echo $sql . "<br>" . $e->getMessage();
+        exit();
+        }
+        $result =$stmt->fetch();
+        if($result){
+            if($uid == $result["user_name"] && password_verify($password, $result["password"])){
+                $_SESSION["uid"]=$result["id"];
                 $_SESSION["username"]=$uid;
                 $_SESSION["LoggedIn"]=true;
                 $_SESSION["login-error"]=NULL;
+                $conn = null;
                 header("Location: /index.php"); 
-              
-                
-        }
-        else{
+            }
+           else{
             $_SESSION["username"]=NULL;
             $_SESSION["LoggedIn"]=false;
             $_SESSION["login-error"]="username or password incorrect";
-        }
+           }
+            
+        
+    } else {
+        $_SESSION["username"]=NULL;
+        $_SESSION["LoggedIn"]=false;
+        $_SESSION["login-error"]="username not exist 1";
+    }
     }
     ?>
     <div class="container">

@@ -163,7 +163,7 @@
                                 <label class="form-check-label" for="java">Java</label>
                               </div>
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="skills[]" id="c" value="c/c++" <?php echo $c?>>
+                                <input class="form-check-input" type="checkbox" name="skills[]" id="c" value="c" <?php echo $c?>>
                                 <label class="form-check-label" for="c">C / C++</label>
                               </div>
                               <div class="form-check form-check-inline">

@@ -4,7 +4,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
     <link rel="stylesheet" href="profileStyle.css">
     <title>profile</title>
     <?php
@@ -21,7 +20,7 @@
       // $sql="SELECT users.first_name,users.email,users.mobile_number,users.age,users.sex,users.image_address,users.resume_address,states.state_id  
       //       FROM users INNER JOIN states ON users.state_id = states.state_id WHERE users.id=? LIMIT 1";
       $table="users";
-      $columns=["users.first_name","users.email","users.mobile_number","users.age","users.sex","users.image_address","users.resume_address","users.state_id"];     
+      $columns=["users.first_name","users.last_name","users.email","users.mobile_number","users.age","users.sex","users.image_address","users.resume_address","users.state_id"];     
       $condition=["users.id"=>$_SESSION['uid']];
       $lmt="LIMIT 1";
       $resultAll = $DBConnector->selectFromMysql($table,$columns,$condition,$lmt);
@@ -31,16 +30,19 @@
         $result = $resultAll[0];
           if ($result) {
           
-            $name=$result['first_name'];
+            $name=$result['first_name']." ".$result['last_name'];
             $email=$result['email'];
             $mobile_number=$result['mobile_number'];
             $gender=$result['sex'];
             $state=$result['state_id'];
             $age=$result['age'];
-        $img = $result['image_address'];
-        $resume_link=$result['resume_address'];
+            $img = $result['image_address'];
+            $resume_link=$result['resume_address'];
           
           
+          }
+          if(!$img){
+            $img ="https://banner2.cleanpng.com/20180521/ocp/kisspng-computer-icons-user-profile-avatar-french-people-5b0365e4f1ce65.9760504415269493489905.jpg";
           }
         }catch(Exception $e){
           die($conn->error);

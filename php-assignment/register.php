@@ -18,50 +18,44 @@
     {
         $uid=$_POST["username"];
         $password=$_POST["password"];
-        if(strpos($uid,",") and strpos($uid,";") and strpos($uid,"-") and strpos($uid,"\'")){
+        $cpassword=$_POST["cpassword"];
+        if(strpos($uid,",") || strpos($uid,";") || strpos($uid,"-") || strpos($uid,"\'")){
             $_SESSION["username"]=NULL;
             $_SESSION["LoggedIn"]=false;
-            $_SESSION["login-error"]="username not exist";
-            header("Location: /login.php"); 
+            $_SESSION["register-error"]="please enter valid username";
+            header("Location: /register.php"); 
            
         } 
-       
-        
-        $resultAll = $DBConnector->selectFromMysql("user_credentials",["user_name","password","id"],["user_name"=>$uid]);
-        $result = $resultAll[0];
-          
-        if($result){
-            if($uid == $result["user_name"] && password_verify($password, $result["password"])){
+        if($password == $cpassword){
+            $password_hash=password_hash($password, PASSWORD_DEFAULT);
+            if($DBConnector->insertIntoMysql("user_credentials",["user_name","password"],[$uid,$password_hash])){
+                $resultAll = $DBConnector->selectFromMysql("user_credentials",["id"],["user_name"=>$uid]);
+                $result = $resultAll[0];
+            if($result){
                 $_SESSION["uid"]=$result["id"];
                 $_SESSION["username"]=$uid;
                 $_SESSION["LoggedIn"]=true;
-                $_SESSION["login-error"]=NULL;
-                $conn = null;
+                $_SESSION["register-error"]=NULL;
                 header("Location: /index.php"); 
+                }
+            else{
+                $_SESSION["username"]=NULL;
+                $_SESSION["LoggedIn"]=false;
+                $_SESSION["register-error"]="username or password incorrect";
             }
-           else{
-            $_SESSION["username"]=NULL;
-            $_SESSION["LoggedIn"]=false;
-            $_SESSION["login-error"]="username or password incorrect";
-           }
-            
-        
-    } else {
-        $_SESSION["username"]=NULL;
-        $_SESSION["LoggedIn"]=false;
-        $_SESSION["login-error"]="username not exist 1";
-    }
+            }
+        }
     }
     ?>
     <div class="container">
         <div class="d-flex   justify-content-center h-100">
             <div class="card">
                 <div class="card-header  d-flex justify-content-center">
-                    <h3>Login</h3>
+                    <h3>Register</h3>
                   
                 </div>
                 <div class="card-body">
-                    <form action="login.php" method="POST">
+                    <form action="register.php" method="POST">
                         <div class="input-group form-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
@@ -75,12 +69,18 @@
                             </div>
                             <input type="password" class="form-control" name="password" placeholder="password" id="password" minlength="5" required>
                         </div>
+                        <div class="input-group form-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                            </div>
+                            <input type="password" class="form-control" name="cpassword" placeholder="confirm password" id="cpassword" minlength="5" required>
+                        </div>
                         <div class="error d-flex justify-content-center">
-                            <?php echo $_SESSION["login-error"] ?>
+                            <?php echo $_SESSION["register-error"] ?>
                         </div>
                         <div class="d-flex justify-content-center">
                         <div class="form-group">
-                                <input type="submit" value="Login" class="btn float-right login_btn">
+                                <input type="submit" value="Register" class="btn float-right login_btn">
                             </div>   
                         <div class="form-group">
                                 <input type="reset" value="Reset" class="btn float-right reset_btn">
@@ -92,13 +92,11 @@
                 </div>
                 <div class="card-footer">
                     <div class="d-flex justify-content-center links">
-                    <div class="form-group">
-                        <a href="register.php">
-                            <button value="Register" class="btn float-right login_btn">
-                                Register
+                    <a href="login.php">
+                            <button value="Register" class="btn float-right register_btn">
+                              Already Registered??
                             </button>
                         </a>
-                            </div>   
                 </div>
             </div>
         </div>

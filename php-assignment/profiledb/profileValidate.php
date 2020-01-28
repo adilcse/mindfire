@@ -62,7 +62,9 @@ session_start();
         $mobile=$_POST['mobileno'];
         $userid=$_SESSION['uid'];
         $stateId=intval($_POST['state']);
-        
+        $fullName=explode(" ",$name,2);
+        $fName=$fullName[0];
+        $lName=$fullName[1];
         //check user exist or not
         // $sql="SELECT id FROM users where id = ? LIMIT 1";
         // $stmt = $conn->prepare($sql);
@@ -76,7 +78,7 @@ session_start();
          if($row = $resultAll[0]) {
             
              $table ="users";
-             $columns = ["first_name"=>$name,"age"=>$age,"email"=>$email,"mobile_number"=>$mobile,"sex"=>$sex,"state_id"=>$stateId];
+             $columns = ["first_name"=>$fName,"last_name"=>$lName,"age"=>$age,"email"=>$email,"mobile_number"=>$mobile,"sex"=>$sex,"state_id"=>$stateId];
              $con = ["id"=>$userid];
             $result = $DBConnector->updateMysql($table,$columns,$con);
            

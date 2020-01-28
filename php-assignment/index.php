@@ -59,11 +59,4 @@ $home="active";
   
   
 </body>
-<?php
-if($_GET["logout"]){
-    session_destroy();
-    header("Location: /login.php"); 
-}
-
-?>
 </html>

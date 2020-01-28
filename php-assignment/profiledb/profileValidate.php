@@ -65,10 +65,7 @@ session_start();
         $fullName=explode(" ",$name,2);
         $fName=$fullName[0];
         $lName=$fullName[1];
-        //check user exist or not
-        // $sql="SELECT id FROM users where id = ? LIMIT 1";
-        // $stmt = $conn->prepare($sql);
-        // $stmt->execute([$userid]);   
+        //check user exist or not 
         $table="users";
         $columns=["id"];     
         $con = ["id"=>$userid];
@@ -76,14 +73,12 @@ session_start();
         $resultAll = $DBConnector->selectFromMysql($table,$columns,$con,$lmt);  
         
          if($row = $resultAll[0]) {
-            
+            //update users table
              $table ="users";
              $columns = ["first_name"=>$fName,"last_name"=>$lName,"age"=>$age,"email"=>$email,"mobile_number"=>$mobile,"sex"=>$sex,"state_id"=>$stateId];
              $con = ["id"=>$userid];
             $result = $DBConnector->updateMysql($table,$columns,$con);
            
-        //    $sql="UPDATE users SET first_name=?, age=?, email=?, mobile_number=?,sex=?,state_id=? WHERE id = ?;";
-        //    $stmt = $conn->prepare($sql);
            if ($result) {          
                updateSkills();
             set_validity("Successfully updated","false");
@@ -95,15 +90,10 @@ session_start();
         }
         else{
             die("error");
-        // update user table
+        // insert data into user table
             $table="users";
             $cols=["id","prefix","first_name","age","email","mobile_number","sex","state_id","created_on"];
             $vals=['$userid','Mr','$name','$age','$email','$mobile','$sex','$stateId','NOW()'];
-            // $sql="INSERT INTO users(id,prefix,first_name,age,email,mobile_number,sex,state_id,created_on) VALUES
-            // ('$userid','Mr','$name',$age,'$email','$mobile','$sex',$stateId,NOW());
-            // ";
-
-           // $stmt=$conn->prepare($sql); 
             if ($DBConnector->insertIntoMysql($table,$cols,$vals)) {
                updateSkills();
             set_validity("Successfully updated","false");
@@ -132,9 +122,7 @@ session_start();
          $skills= $_POST["skills"];
          $un_selected=array_diff($total_skill,$skills);
          $new_selected = array_diff($skills,$total_skill);
-          
-         foreach($new_selected as $skill){
-         // $stmt_insert->execute([$userid,$skill]);  
+         foreach($new_selected as $skill){ 
          $table="user_skills";
          $cols= ["user_id","skill_id"];
          $values=[$userid,$skill];

@@ -19,6 +19,7 @@
         $uid=$_POST["username"];
         $password=$_POST["password"];
         $cpassword=$_POST["cpassword"];
+        //check  username for invalid charecter
         if(strpos($uid,",") || strpos($uid,";") || strpos($uid,"-") || strpos($uid,"\'")){
             $_SESSION["username"]=NULL;
             $_SESSION["LoggedIn"]=false;
@@ -28,6 +29,7 @@
         } 
         if($password == $cpassword){
             $password_hash=password_hash($password, PASSWORD_DEFAULT);
+            //insert new user into db
             if($DBConnector->insertIntoMysql("user_credentials",["user_name","password"],[$uid,$password_hash])){
                 $resultAll = $DBConnector->selectFromMysql("user_credentials",["id"],["user_name"=>$uid]);
                 $result = $resultAll[0];
@@ -43,7 +45,15 @@
                 $_SESSION["LoggedIn"]=false;
                 $_SESSION["register-error"]="username or password incorrect";
             }
+            }else{
+                $_SESSION["username"]=NULL;
+                $_SESSION["LoggedIn"]=false;
+                $_SESSION["register-error"]="user already exist";
             }
+        }else{
+            $_SESSION["username"]=NULL;
+            $_SESSION["LoggedIn"]=false;
+            $_SESSION["register-error"]="passwords not matched";
         }
     }
     ?>

@@ -25,12 +25,13 @@
             header("Location: /login.php"); 
            
         } 
-       
+       //get user name and password from db
         
         $resultAll = $DBConnector->selectFromMysql("user_credentials",["user_name","password","id"],["user_name"=>$uid]);
         $result = $resultAll[0];
           
         if($result){
+            //varify password
             if($uid == $result["user_name"] && password_verify($password, $result["password"])){
                 $_SESSION["uid"]=$result["id"];
                 $_SESSION["username"]=$uid;

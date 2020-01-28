@@ -16,7 +16,7 @@
             }   
             catch(PDOException $e)
             {
-            echo "Connection failed: " . $e->getMessage();
+           // echo "Connection failed: " . $e->getMessage();
             }
         } 
         
@@ -58,7 +58,7 @@
                
             }catch(PDOException $e)
             {
-            echo $sql . "<br>" . $e->getMessage();
+           // echo $sql . "<br>" . $e->getMessage();
             return false;
             }
         }
@@ -98,7 +98,7 @@
                 return ($stmt->fetchAll()); 
             }catch(PDOException $e)
             {
-            echo $sql . "<br>" . $e->getMessage();
+          //  echo $sql . "<br>" . $e->getMessage();
             return false;
             }
             
@@ -140,7 +140,7 @@
                 return (true);  
             }catch(PDOException $e)
             {
-            echo $sql . "<br>" . $e->getMessage();
+          //  echo $sql . "<br>" . $e->getMessage();
             return false;
             }
         }
@@ -160,7 +160,7 @@
                 return true;
             }catch(PDOException $e)
             {
-            echo $sql . "<br>" . $e->getMessage();
+          //  echo $sql . "<br>" . $e->getMessage();
             return false;
             }
 
@@ -189,7 +189,7 @@
                 return true;
             }catch(PDOException $e)
             {
-            echo $sql . "<br>" . $e->getMessage();
+            
             return false;
             }
 

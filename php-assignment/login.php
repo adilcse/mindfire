@@ -25,21 +25,11 @@
             header("Location: /login.php"); 
            
         } 
-        try{
+       
+        
+        $resultAll = $DBConnector->selectFromMysql("user_credentials",["user_name","password","id"],["user_name"=>$uid]);
+        $result = $resultAll[0];
           
-            $sql="SELECT user_name,password,id from user_credentials WHERE user_name=? LIMIT 1;";
-            $stmt = $conn->prepare($sql);
-             
-            $stmt->execute([$uid]);  
-            
-          
-           
-        }catch(PDOException $e)
-        {
-        echo $sql . "<br>" . $e->getMessage();
-        exit();
-        }
-        $result =$stmt->fetch();
         if($result){
             if($uid == $result["user_name"] && password_verify($password, $result["password"])){
                 $_SESSION["uid"]=$result["id"];

@@ -1,9 +1,9 @@
 
 <?php 
     class DataBaseConnecter { 
-        private $servername = "localhost";
-        private $username = "root";
-        private $password = "Mindfire1";
+        private $servername = "myawsdatabase.cgciww58dmdb.us-east-2.rds.amazonaws.com";
+        private $username = "local";
+        private $password = "mindfire";
         private $db = "php_profile";
         private static $obj;			
         private $conn;                     
@@ -152,10 +152,11 @@
                 array_push($q,"?");
             }
             $val=implode(', ', $q);
-            $sql_insert="INSERT IGNORE INTO $table($col) VALUES($val)";
+            $sql_insert="INSERT INTO $table($col) VALUES($val)";
             try{
                 $stmt_insert=$this->conn->prepare($sql_insert);
                 $stmt_insert->execute($values);  
+                
                 return true;
             }catch(PDOException $e)
             {

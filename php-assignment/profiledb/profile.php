@@ -17,28 +17,37 @@
      include('dbConnectpdo.php');
      $name=$email=$mobile_number=$age=$gender=$img=$resume_link=$state='';
      if(!empty($_SESSION['uid'])){
-      $sql="SELECT users.first_name,users.email,users.mobile_number,users.age,users.sex,users.image_address,users.resume_address,states.state_id  
-            FROM users INNER JOIN states ON users.state_id = states.state_id WHERE users.id=? LIMIT 1";
-       try{
-      
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$_SESSION['uid']]);   
-       $result = $stmt->fetch();
-        if ($result) {
-         
-          $name=$result['first_name'];
-          $email=$result['email'];
-          $mobile_number=$result['mobile_number'];
-          $gender=$result['sex'];
-          $state=$result['state_id'];
-          $age=$result['age'];
-		  $img = $result['image_address'];
-		  $resume_link=$result['resume_address'];
-        
-        
+       
+      // $sql="SELECT users.first_name,users.email,users.mobile_number,users.age,users.sex,users.image_address,users.resume_address,states.state_id  
+      //       FROM users INNER JOIN states ON users.state_id = states.state_id WHERE users.id=? LIMIT 1";
+      $table="users";
+      $columns=["users.first_name","users.email","users.mobile_number","users.age","users.sex","users.image_address","users.resume_address","users.state_id"];     
+      $condition=["users.id"=>$_SESSION['uid']];
+      $lmt="LIMIT 1";
+      $resultAll = $DBConnector->selectFromMysql($table,$columns,$condition,$lmt);
+      if($resultAll)
+        { 
+          try{
+        $result = $resultAll[0];
+          if ($result) {
+          
+            $name=$result['first_name'];
+            $email=$result['email'];
+            $mobile_number=$result['mobile_number'];
+            $gender=$result['sex'];
+            $state=$result['state_id'];
+            $age=$result['age'];
+        $img = $result['image_address'];
+        $resume_link=$result['resume_address'];
+          
+          
+          }
+        }catch(Exception $e){
+          die($conn->error);
         }
-      }catch(Exception $e){
-        die($conn->error);
+      }
+      else{
+        die("<h1> something went wrong </h1>");
       }
      }else{
       header("Location: ../login.php"); 
@@ -118,16 +127,11 @@
                             <option value='0' disabled selected>--select--</option>
                               <?php
                               
-
-                               $sql="SELECT * FROM states;";
-                               
-                              try{
-                               
-                                $stmt=$conn->prepare($sql);
-                                $stmt->execute();
-                               
-                                
-                                while( $result =$stmt->fetch()){
+                              $table="states";
+                              $columns=["state_id","state_name"];     
+                              $resultAll = $DBConnector->selectFromMysql($table,$columns);      
+                           
+                                foreach( $resultAll as $result){
                                   if ($result) {
                                     $is_selected ='';
                                    if($result['state_id'] == $state) 
@@ -138,9 +142,7 @@
                                  }
                                 }
                                
-                              }catch(Exception $e){
-                                echo $conn->error ; 
-                              }
+                             
                              
                               ?>
                               
@@ -152,24 +154,28 @@
                           <div class="">
                             <label >Skills</label><br>
                             <?php
-                           
-                                $sql="SELECT id,skill FROM skills;";
-                                $sql_skills = "SELECT skill_id from user_skills WHERE user_id= ?;";
-                                $stmt_skill = $conn->prepare($sql_skills);
+                                $table="skills";
+                                $columns=["id","skill"];     
+                                $resultAllskills = $DBConnector->selectFromMysql($table,$columns);     
+                                $table="user_skills";
+                                $columns=["skill_id"];     
+                                $condition = ["user_id"=>$_SESSION['uid']];
+                                $resultAllUserSkills = $DBConnector->selectFromMysql($table,$columns,$condition);
+                                // $sql_skills = "SELECT skill_id from user_skills WHERE user_id= ?;";
+                                // $stmt_skill = $conn->prepare($sql_skills);
                                
-                                $stmt_skill->execute([$_SESSION['uid']]);   
+                                // $stmt_skill->execute([$_SESSION['uid']]);   
                                 
                                 $selected_skills =[];
-                               while($skl = $stmt_skill->fetch())
+                               foreach($resultAllUserSkills as $skl)
                                 { 
                                 
                                   array_push($selected_skills,$skl['skill_id']); 
                                 }
                              
-                                $all_skills=$conn->prepare($sql);
-                                 $all_skills->execute();
+                              
                                 
-                                 while($row = $all_skills->fetch()) {
+                                 foreach($resultAllskills as $row) {
                                 
                                    $check='';
                                    if(in_array($row["id"],$selected_skills)){

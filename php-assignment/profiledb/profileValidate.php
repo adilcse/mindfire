@@ -54,8 +54,7 @@ session_start();
 
     }  
     function addToDb(){
-        $DB = DataBaseConnecter::getInstance(); 
-        $conn = $DB->getConnect();
+        $DBConnector = DataBaseConnecter::getInstance();
         $name=$_POST['name'];
         $age=$_POST['age'];
         $email=$_POST['email'];
@@ -63,68 +62,89 @@ session_start();
         $mobile=$_POST['mobileno'];
         $userid=$_SESSION['uid'];
         $stateId=intval($_POST['state']);
+        $fullName=explode(" ",$name,2);
+        $fName=$fullName[0];
+        $lName=$fullName[1];
+        //check user exist or not 
+        $table="users";
+        $columns=["id"];     
+        $con = ["id"=>$userid];
+        $lmt = "LIMIT 1";
+        $resultAll = $DBConnector->selectFromMysql($table,$columns,$con,$lmt);  
         
-        //check user exist or not
-        $sql="SELECT id FROM users where id = ? LIMIT 1";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$userid]);   
-         if($row = $stmt->fetch()) {
-            
-           $sql="UPDATE users SET first_name=?, age=?, email=?, mobile_number=?,sex=?,state_id=? WHERE id = ?;";
-           $stmt = $conn->prepare($sql);
-           if ($stmt->execute([$name,$age,$email,$mobile,$sex,$stateId,$userid]) === TRUE) { 
-               //select total skills available
-               $total_skills_aray = $conn->prepare("SELECT skill_id FROM user_skills WHERE user_id = $userid");
-               $total_skills_aray->execute();
-               $total_skill=[];
-                while($skl = $total_skills_aray->fetch()){
-                   array_push($total_skill,$skl['skill_id']);
-                }
-             
-                //add skill table
-                $sql_insert="INSERT IGNORE INTO user_skills(user_id,skill_id) VALUES(?,?)";  
-                $sql_delete="DELETE FROM user_skills WHERE user_id= ? AND skill_id = ?";  
-                $stmt_insert=$conn->prepare($sql_insert);
-                $stmt_delete=$conn->prepare($sql_delete);
-               $skills= $_POST["skills"];
-               $un_selected=array_diff($total_skill,$skills);
-               $new_selected = array_diff($skills,$total_skill);
-              
-               foreach($new_selected as $skill){
-                $stmt_insert->execute([$userid,$skill]);     
-               }
-               foreach($un_selected as $skill){
-                   $stmt_delete->execute([$userid,$skill]);
-               }
-             
+         if($row = $resultAll[0]) {
+            //update users table
+             $table ="users";
+             $columns = ["first_name"=>$fName,"last_name"=>$lName,"age"=>$age,"email"=>$email,"mobile_number"=>$mobile,"sex"=>$sex,"state_id"=>$stateId];
+             $con = ["id"=>$userid];
+            $result = $DBConnector->updateMysql($table,$columns,$con);
+           
+           if ($result) {          
+               updateSkills();
             set_validity("Successfully updated","false");
             } else {
-               
-                set_validity( $conn->error);
+             
+                set_validity( "Not updated");
                 
             }
         }
         else{
-        // update user table
-            $sql="INSERT INTO users(id,prefix,first_name,age,email,mobile_number,sex,state_id,created_on) VALUES
-            ('$userid','Mr','$name',$age,'$email','$mobile','$sex',$stateId,NOW());
-            ";
-            $stmt=$conn->prepare($sql); 
-            if ($stmt->execute() === TRUE) {
-                //update skill table
-
+            die("error");
+        // insert data into user table
+            $table="users";
+            $cols=["id","prefix","first_name","age","email","mobile_number","sex","state_id","created_on"];
+            $vals=['$userid','Mr','$name','$age','$email','$mobile','$sex','$stateId','NOW()'];
+            if ($DBConnector->insertIntoMysql($table,$cols,$vals)) {
+               updateSkills();
             set_validity("Successfully updated","false");
             } else {
-                set_validity( $conn->error);
+                set_validity($DBConnector->getConnect()->error);
                 
             }
         }
     }  
 
+     function updateSkills()
+    {
+        $DBConnector = DataBaseConnecter::getInstance();
+        $userid=$_SESSION['uid'];
+        $table="user_skills";
+        $columns=["skill_id"];
+        $condition=["user_id"=>$userid];
+         $total_skills_aray =  $DBConnector->selectFromMysql($table,$columns,$condition);
+        
+         $total_skill=[];
+          foreach($total_skills_aray as $skl){
+             array_push($total_skill,$skl['skill_id']);
+             
+          }
+         
+         $skills= $_POST["skills"];
+         $un_selected=array_diff($total_skill,$skills);
+         $new_selected = array_diff($skills,$total_skill);
+         foreach($new_selected as $skill){ 
+         $table="user_skills";
+         $cols= ["user_id","skill_id"];
+         $values=[$userid,$skill];
+         if(!$DBConnector->insertIntoMysql($table,$cols,$values)){
+             set_validity("skills can't be added");
 
+         }         
+           
+         }
+         foreach($un_selected as $skill){
+          $table="user_skills";
+          $con= ["user_id"=>$userid,"skill_id"=>$skill];
+          if(!$DBConnector->deleteFromMysql($table,$con)){
+              set_validity("skills can't be deleted.");
+          }
+            
+         }
+        
+    }
     function verifyImage(){
-        $DB = DataBaseConnecter::getInstance(); 
-        $conn = $DB->getConnect();
+        $DBConnector = DataBaseConnecter::getInstance(); 
+      
         if(isset($_POST["upload"])){
             $allowed_image_extension = array(
                 "png",
@@ -155,16 +175,19 @@ session_start();
                 $image_name = substr($_FILES["avatar"]["tmp_name"],strripos($_FILES["avatar"]["tmp_name"],"/")+1);
                 $image_address = "/profileImages/".$image_name;
                 $target = "..".$image_address;
-                $sql="SELECT image_address FROM users WHERE id=?";
-                $stmt = $conn->prepare($sql);
-                $stmt->execute([$_SESSION['uid']]);   
-               $result = $stmt->fetch();
-              
+         
+                $table = "users";
+                $cols=["image_address"];
+                $con=["id"=>$_SESSION['uid']];
+                $resultAll = $DBConnector->selectFromMysql($table,$cols,$con);
+                $result = $resultAll[0];
                 if (move_uploaded_file($_FILES["avatar"]["tmp_name"], $target)) {
                     unlink("..".$result['image_address']); 
-                    $sql="UPDATE users SET image_address = ? WHERE id = ?;";
-                    $stmt = $conn->prepare($sql); 
-                    if ($stmt->execute([$image_address,$_SESSION['uid']])) { 
+                    $table="users";
+                    $cols=["image_address"=>$image_address];
+                    $con=["id"=>$_SESSION['uid']];
+                
+                    if ($DBConnector->updateMysql($table,$cols,$con)) { 
                         return true;
                     }
                     else{
@@ -185,8 +208,7 @@ session_start();
     }
 
     function verifyResume(){
-        $DB = DataBaseConnecter::getInstance(); 
-        $conn = $DB->getConnect();
+        $DBConnector = DataBaseConnecter::getInstance(); 
         if(isset($_POST["upload"])){
             $allowed_image_extension = array(
                 "pdf",
@@ -217,16 +239,19 @@ session_start();
                 $resume_name = substr($_FILES["resume"]["tmp_name"],strripos($_FILES["resume"]["tmp_name"],"/")+1);
                 $resume_address = "/profileResume/".$resume_name;
                 $target = "..".$resume_address;
-                $sql="SELECT resume_address FROM users WHERE id=?";
-                $stmt = $conn->prepare($sql);
-                $stmt->execute([$_SESSION['uid']]);   
-               $result = $stmt->fetch();
+                $table = "users";
+                $cols=["resume_address"];
+                $con=["id"=>$_SESSION['uid']];
+                $resultAll = $DBConnector->selectFromMysql($table,$cols,$con);
+                $result = $resultAll[0];
               
                 if (move_uploaded_file($_FILES["resume"]["tmp_name"], $target)) {
                     unlink("..".$result['resume_address']); 
-                    $sql="UPDATE users SET resume_address = ? WHERE id = ?;";
-                    $stmt = $conn->prepare($sql);
-                    if ($stmt->execute([$resume_address,$_SESSION['uid']]) === TRUE) { 
+                    $table="users";
+                    $cols=["resume_address"=>$resume_address];
+                    $con=["id"=>$_SESSION['uid']];
+                
+                    if ($DBConnector->updateMysql($table,$cols,$con)) { 
                         return true;
                     }
                     else{

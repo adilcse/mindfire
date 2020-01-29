@@ -14,7 +14,7 @@ $username=$_SESSION["username"] ;
   <a href="/" class="logo"><img src="/header/logo.jpg" width="150px" height="80px">
 <div class="welcome-msg"></div>
 </a>
-  
+  <!-- create header -->
   <div class="header-right">
     
     <a class="<?php echo $home ;?>" href="/">Home</a>

@@ -1,14 +1,17 @@
 <?php
-    include("databaseConnect.php");
-    $username="example";
-    $password="testing";
+    include("../profiledb/dbConnectpdo.php");
+    $username="adil";
+    $password="mindfire";
     $password_hash=password_hash($password, PASSWORD_DEFAULT);
-    $sql="INSERT INTO user_credentials(user_name,password) VALUES('$username','$password_hash');";
-    if($conn->query($sql) === TRUE){
+   
+   
+   if($DBConnector->insertIntoMysql("user_credentials",["user_name","password"],[$username,$password_hash]))
+    {
         echo "added successfully.";
 
     }
     else{
+        echo "failed";
         echo $conn->error;
     }
 ?>

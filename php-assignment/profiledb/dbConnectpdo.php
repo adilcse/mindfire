@@ -16,7 +16,9 @@
             }   
             catch(PDOException $e)
             {
-           // echo "Connection failed: " . $e->getMessage();
+         //  echo "Connection failed: " . $e->getMessage();
+
+           $this->conn = false;
             }
         } 
         
@@ -203,6 +205,7 @@
         }
     }
     $DBConnector = DataBaseConnecter::getInstance(); 
+   
    // $DBConnector->test();
    
 

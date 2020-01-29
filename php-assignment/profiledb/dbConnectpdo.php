@@ -183,7 +183,7 @@
                 array_push($val,$value);
                 
             }
-            $sql_delete="DELETE FROM user_skills WHERE $con"; 
+            $sql_delete="DELETE FROM $table WHERE $con"; 
             try{
                
                 $stmt = $this->conn->prepare($sql_delete);  

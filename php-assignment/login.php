@@ -113,7 +113,7 @@
 						</div>
 						<div class=" d-flex justify-content-left">
 							<div class="form-check form-check-inline">
-								<input class="form-check-input" type="checkbox"  name="rememberme" id="rememberme" value="true">
+								<input class="form-check-input" type="checkbox"  name="rememberme" id="rememberme" value="true" checked>
 								<label class="form-check-label"  for="rememberme">Remember me</label>
 							</div>
 						</div>
@@ -144,5 +144,8 @@
 	</div>
 
 </body>
+<?php
+$_SESSION["login-error"]=NULL;
+?>
 
 </html>

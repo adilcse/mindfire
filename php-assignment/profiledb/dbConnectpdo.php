@@ -196,13 +196,7 @@
             }
 
         }
-        public function test()
-        {
-            $table="states";
-            $columns=["state_id","state_name"];    
-            var_dump($this->selectFromMysql($table,$columns));
-
-        }
+       
     }
     $DBConnector = DataBaseConnecter::getInstance(); 
    

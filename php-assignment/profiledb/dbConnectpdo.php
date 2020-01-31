@@ -32,26 +32,20 @@
         public function getConnect() {
             return $this->conn; 
         } 
-        public function selectFromMysql($table,$columns,$condition=["1"=>"1"]){
+        public function selectFromMysql($table,$columns=['*'],$condition=["1"=>"1"]){
             $col = implode(', ', $columns); 
             $con='';
-            $begin = true;
             $val =[];
             foreach($condition as $key=>$value){
-                if($begin){
-                    $con .= $key." = ? ";
-                    $begin = false;
-                }
-                else{
-                    $con .= " AND ".$key." = ? ";
-                }
-                array_push($val,$value);
-                
+                $con .= $key." = ? "." AND ";
+                array_push($val,$value);            
             }
+            $con = trim($con," AND");
+           
+
             try{
                
                 $sql="SELECT $col FROM $table WHERE $con ;";
-               
                 $stmt = $this->conn->prepare($sql);  
                 $stmt->execute($val);
                 
@@ -66,33 +60,19 @@
         }
         public function selectFromMysqlJoin($table,$columns,$joinType,$joinTable,$onCondition,$whereCondition=["true"=>"true"],$lmt=''){
             $col = implode(', ', $columns); 
-            $begin = true;
             $val =[];
             $con = '';
             foreach($whereCondition as $key=>$value){
-                if($begin){
-                    $con .= $key." = ? ";
-                    $begin = false;
-                }
-                else{
-                    $con .= " AND ".$key." = ? ";
-                }
-                array_push($val,$value);
-                
+                    $con .= $key." = ? "." AND "; 
+                array_push($val,$value);  
             }
+            trim($con," AND");
             $onCon='';
-            $beginOn = true;
             foreach($onCondition as $key=>$value){
-                if($beginOn){
-                    $onCon .= $key." = ".$value;
-                    $beginOn = false;
-                }
-                else{
-                    $onCon .= " AND ".$key." = ".$value;
-                }
-             
-                
+                    $onCon .= $key." = ".$value." AND ";  
+                    array_push($val,$value);
             }
+            trim($onCon," AND ");
             $sql = "SELECT $col FROM $table $joinType $joinTable ON $onCon  WHERE $con $lmt";
             try{
                 $stmt = $this->conn->prepare($sql);
@@ -107,33 +87,21 @@
         }
         public function updateMysql($table,$setColumns,$condition)
         {
-            $begin = true;
+           
             $val=[];
             $col = '';
             foreach($setColumns as $key=>$value){
-                if($begin){
-                    $col .= $key." = ? ";
-                    $begin = false;
-                }
-                else{
-                    $col .= " , ".$key." = ? ";
-                }
-                array_push($val,$value);
-                
+                $col .= $key." = ? "." , ";    
+                array_push($val,$value);    
             }
-            $begin = true;
+            trim($col,",");
+           
             $con = '';
-            foreach($condition as $key=>$value){
-                if($begin){
-                    $con .= $key." = ? ";
-                    $begin = false;
-                }
-                else{
-                    $con .= " , ".$key." = ? ";
-                }
-                array_push($val,$value);
-                
+            foreach($condition as $key=>$value){  
+                $con .= $key." = ? AND";      
+                array_push($val,$value);   
             }
+            trim($con, "AND");
 
             $sql="UPDATE $table SET $col WHERE $con;";
             try{
@@ -170,19 +138,16 @@
         public function deleteFromMysql($table,$condition)
         {
             $con='';
-            $begin = true;
+           
             $val =[];
             foreach($condition as $key=>$value){
-                if($begin){
-                    $con .= $key." = ? ";
-                    $begin = false;
-                }
-                else{
-                    $con .= " AND ".$key." = ? ";
-                }
+             
+                    $con .= $key." = ? AND ";
+                   
                 array_push($val,$value);
                 
             }
+            trim($con,"AND");
             $sql_delete="DELETE FROM $table WHERE $con"; 
             try{
                
@@ -196,11 +161,15 @@
             }
 
         }
+        public function test(){
+          $res =  $this->selectFromMysql("users",["first_name"],["age"=>26,"age"=>23]);
+            var_dump($res);
+        }
        
     }
     $DBConnector = DataBaseConnecter::getInstance(); 
    
-   // $DBConnector->test();
+  //  $DBConnector->test();
    
 
 ?> 

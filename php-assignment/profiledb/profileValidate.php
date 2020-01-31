@@ -270,7 +270,7 @@ session_start();
                 set_validity("Something went wrong.");
                 return false;
 
-            }
+        }
         }
     
 

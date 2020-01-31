@@ -266,9 +266,9 @@ session_start();
 
             }
         }
-            else{
-                set_validity("Something went wrong.");
-                return false;
+        else{
+            set_validity("Something went wrong.");
+            return false;
 
         }
         }

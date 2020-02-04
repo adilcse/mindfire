@@ -184,7 +184,7 @@
 											Please select an image of size less then 1MB.
 										</div>
 										<div class="resume-img">
-											<a href = "<?php echo $resume_link; ?>">
+											<a href = "<?php echo $resume_link; ?>" download>
 												<img src="https://img.icons8.com/plasticine/2x/resume.png" width="200px"  height="200px">
 											</a>
 											<div class="form-check ">

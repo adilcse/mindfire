@@ -1,5 +1,6 @@
 <?php
-include('dbConnectpdo.php');
+require_once('dbConnectpdo.php');
+require_once('emailValidate.php');
 session_start();
     if(!empty($_POST)){
         ini_set('display_errors', 1);
@@ -36,7 +37,7 @@ session_start();
         $_SESSION["profile-error"]=$type;
         $_SESSION["profile-msg"]=$errvalue;
         header("Location: /profiledb/profile.php");
-       
+       die;
     }
     function test_input($data) {
         $data = trim($data);
@@ -65,14 +66,29 @@ session_start();
         $fullName=explode(" ",$name,2);
         $fName=$fullName[0];
         $lName=$fullName[1];
+        //check validity of email
+        $emailValid = new emailValidate($email);
+        $validated = $emailValid->validate();
+        if($validated){
+           
+            if(!$validated["validFormat"]){
+                set_validity("Invalid email Address");
+            }
+            else if(!$validated['hostExists']){
+                set_validity("email domain doen not exist");
+            }
+        }else{
+            set_validity("email varification failed");
+        }
         //check user exist or not 
         $table="users";
         $columns=["id"];     
         $con = ["id"=>$userid];
         $lmt = "LIMIT 1";
         $resultAll = $DBConnector->selectFromMysql($table,$columns,$con,$lmt);  
-        
-         if($row = $resultAll[0]) {
+
+        //if user exist update profile details
+         if($resultAll[0]) {
             //update users table
              $table ="users";
              $columns = ["first_name"=>$fName,"last_name"=>$lName,"age"=>$age,"email"=>$email,"mobile_number"=>$mobile,"sex"=>$sex,"state_id"=>$stateId];

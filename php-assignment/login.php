@@ -54,10 +54,13 @@
 						</div>
 
 					</form>
+					<div class="d-flex justify-content-center">
+						<div class="g-signin2 " data-onsuccess="onSignIn"></div>
+					</div>
 				</div>
 				<div class="card-footer">
 					<div class="d-flex justify-content-center links">
-					<div class="g-signin2" data-onsuccess="onSignIn"></div>
+					
 					<div class="form-group">
 						<a href="register.php">
 							<button value="Register" class="btn float-right login_btn">

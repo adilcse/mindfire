@@ -78,7 +78,7 @@ session_start();
              $columns = ["first_name"=>$fName,"last_name"=>$lName,"age"=>$age,"email"=>$email,"mobile_number"=>$mobile,"sex"=>$sex,"state_id"=>$stateId];
              $con = ["id"=>$userid];
             $result = $DBConnector->updateMysql($table,$columns,$con);
-           
+          
            if ($result) {          
                updateSkills();
             set_validity("Successfully updated","false");

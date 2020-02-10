@@ -40,7 +40,7 @@
                 $con .= $key." = ? "." AND ";
                 array_push($val,$value);            
             }
-            $con = trim($con," AND");
+            $con = trim($con," AND ");
            
 
             try{
@@ -66,13 +66,13 @@
                     $con .= $key." = ? "." AND "; 
                 array_push($val,$value);  
             }
-            trim($con," AND");
+            $con = trim($con," AND");
             $onCon='';
             foreach($onCondition as $key=>$value){
                     $onCon .= $key." = ".$value." AND ";  
                     array_push($val,$value);
             }
-            trim($onCon," AND ");
+           $onCon= trim($onCon," AND ");
             $sql = "SELECT $col FROM $table $joinType $joinTable ON $onCon  WHERE $con $lmt";
             try{
                 $stmt = $this->conn->prepare($sql);
@@ -94,22 +94,27 @@
                 $col .= $key." = ? "." , ";    
                 array_push($val,$value);    
             }
-            trim($col,",");
+            $col = trim($col,", ");
+           
+
            
             $con = '';
             foreach($condition as $key=>$value){  
                 $con .= $key." = ? AND";      
                 array_push($val,$value);   
             }
-            trim($con, "AND");
-
+            $con =  trim($con,'AND');
+           
             $sql="UPDATE $table SET $col WHERE $con;";
+            echo $sql.'\n';
             try{
                 $stmt = $this->conn->prepare($sql);
                 $stmt->execute($val);  
                 return (true);  
             }catch(PDOException $e)
             {
+             
+
           //  echo $sql . "<br>" . $e->getMessage();
             return false;
             }
@@ -147,7 +152,7 @@
                 array_push($val,$value);
                 
             }
-            trim($con,"AND");
+            $con = trim($con,"AND");
             $sql_delete="DELETE FROM $table WHERE $con"; 
             try{
                

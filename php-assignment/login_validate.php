@@ -1,9 +1,28 @@
 <?php
+require_once 'vendor/autoload.php';
 	session_start();
 	 include('profiledb/dbConnectpdo.php');
 
 	if (!empty($_POST))
 	{
+		if($_POST['google']==="true"){
+			$CLIENT_ID = "14597457274-6f120scjmftf012ru7i1e24hs5ecf6vl.apps.googleusercontent.com";
+			$id_token = $_POST["user_token"];
+			$client = new Google_Client(['client_id' => $CLIENT_ID]);  // Specify the CLIENT_ID of the app that accesses the backend
+			$payload = $client->verifyIdToken($id_token);
+			if ($payload) {
+			$userid = $payload['sub'];
+			//work from here
+			checkUserExist($payload);
+			
+			} else {
+				echo "error";
+			// Invalid ID token
+			}
+			echo "googleSignedIn";
+			die;
+			
+		}
 		$uid=$_POST["username"];
 		$password=$_POST["password"];
 		if(strpos($uid,",") and strpos($uid,";") and strpos($uid,"-") and strpos($uid,"\'")){
@@ -55,6 +74,10 @@
 		echo $e->getMessage();
 	}
 	}
+
+	function checkUserExist($payload){
+
+	}
 	if(isset($_COOKIE['uid'])){
 		if($DBConnector->getConnect()){
 			$resultAll = $DBConnector->selectFromMysql("user_credentials",["user_name","id"],["id"=>$_COOKIE['uid']]);
@@ -75,4 +98,5 @@
 			}
 		}	
 	}
+	
 	?>

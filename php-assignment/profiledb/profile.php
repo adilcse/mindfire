@@ -81,10 +81,16 @@
 								<div class="form-group">
 									<label for="name">Your Name</label>
 									<input type="text" class="form-control" id="name" name="name" value="<?php echo $name ;?>" >
+									<div class="invalid-feedback">
+										Please enter valid name
+									  </div>
 								</div>
 								<div class="form-group">
 									<label for="email">Email address</label>
 									<input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" value="<?php echo $email ;?>"  required>
+									<div class="invalid-feedback">
+										Please enter valid email
+									  </div>
 								</div>
 								<div class="form-group">
 									<label class="" for="mobileno">Mobile number</label>
@@ -207,7 +213,7 @@
 						</div>
 						<div class="row justify-center">
 							<div class="text-center">
-							<button type="submit" name="upload" class="btn btn-primary mr-2">Save</button>
+							<button type="submit" name="upload" class="btn btn-primary mr-2" id="submit">Save</button>
 							<button type="reset" class="btn btn-primary">Clear</button>
 							</div>
 						</div>
@@ -215,7 +221,50 @@
 				</div>
 			</div>
 		</div>
+		<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 		<script>
+			$("#name").keyup(function(){
+			let name = $(this).val();
+			validateName(name);
+			});
+			$("#email").keyup(function(){
+				let email = $(this).val();
+				validateEmail(email);	
+			});
+			$("#submit").click(function(event){
+				event.preventDefault();
+				const name = $("#name").val();
+				const email = $("#email").val();
+				if(validateName(name) && validateEmail(email)){
+					$(this).unbind('click').click();
+				}
+
+			});
+			function validateEmail(email){
+				let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+				if(email.match(mailformat)){
+				$("#email").removeClass("is-invalid");
+				$("#email").addClass("is-valid");
+				return true;
+				}else{
+					$("#email").removeClass("is-valid");
+					$("#email").addClass("is-invalid");
+					return false;
+				}
+			}
+			function validateName(name){
+				
+				if(name.length > 3){
+					$("#name").removeClass("is-invalid");
+					$("#name").addClass("is-valid");
+					return true;
+				}		
+				else {
+					$("#name").removeClass("is-valid");
+					$("#name").addClass("is-invalid");
+					return false;	
+				}
+			}
 			function setphoto(p){
 				let img=  document.getElementById("profilepic");
 				let imgsize=p.files[0].size/(1024);

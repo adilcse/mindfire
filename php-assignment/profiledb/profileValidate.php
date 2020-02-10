@@ -1,13 +1,19 @@
 <?php
 require_once('dbConnectpdo.php');
 require_once('emailValidate.php');
+require_once('../constants/error.php');
+
 session_start();
+if(!isset($_SESSION['LoggedIn']) && !$_SESSION["LoggedIn"]){
+  $_SESSION["login-error"]="please login first";
+  header("Location: /login.php"); 
+}
     if(!empty($_POST)){
         ini_set('display_errors', 1);
 
         $skills=$_POST["skills"];
         if(count($skills)<2){
-           set_validity("enter atleast 2 skills");
+           set_validity(INVALID_SKILL);
             exit();
         }else{
             if(!empty($_POST["changeImage"]) && $_POST["changeImage"]=="true"){
@@ -16,7 +22,7 @@ session_start();
                         addToDb();
                     }
                 else{
-                    set_validity("invalid image.");
+                    set_validity(INVALID_IMAGE);
                 } 
             }
             elseif(!empty($_POST["changeResume"])){
@@ -39,7 +45,8 @@ session_start();
         header("Location: /profiledb/profile.php");
        die;
     }
-    function test_input($data) {
+    function test_input($data){
+       
         $data = trim($data);
         $data = stripslashes($data);
         $data = htmlspecialchars($data);
@@ -67,18 +74,25 @@ session_start();
         $fName=$fullName[0];
         $lName=$fullName[1];
         //check validity of email
+      
         $emailValid = new emailValidate($email);
         $validated = $emailValid->validate();
-        if($validated){
-           
+        if($validated){  
             if(!$validated["validFormat"]){
-                set_validity("Invalid email Address");
+                set_validity(INVALID_EMAIL);
             }
             else if(!$validated['hostExists']){
-                set_validity("email domain doen not exist");
+                set_validity(INVALID_EMAIL_DOMAIN);
             }
         }else{
-            set_validity("email varification failed");
+            set_validity(EMAIL_FAILED);
+        }
+        //check input data
+        if(!test_input($fName)){
+            set_validity(INVALID_NAME);
+        }
+        if($age>30 || $age <20){
+
         }
         //check user exist or not 
         $table="users";
@@ -97,10 +111,10 @@ session_start();
           
            if ($result) {          
                updateSkills();
-            set_validity("Successfully updated","false");
+            set_validity(UPDATE_SUCCESS,"false");
             } else {
              
-                set_validity( "Not updated");
+                set_validity(UPDATE_FAILED);
                 
             }
         }
@@ -112,7 +126,7 @@ session_start();
             $vals=['$userid','Mr','$name','$age','$email','$mobile','$sex','$stateId','NOW()'];
             if ($DBConnector->insertIntoMysql($table,$cols,$vals)) {
                updateSkills();
-            set_validity("Successfully updated","false");
+            set_validity(UPDATE_SUCCESS,"false");
             } else {
                 set_validity($DBConnector->getConnect()->error);
                 
@@ -143,7 +157,7 @@ session_start();
          $cols= ["user_id","skill_id"];
          $values=[$userid,$skill];
          if(!$DBConnector->insertIntoMysql($table,$cols,$values)){
-             set_validity("skills can't be added");
+             set_validity(SKILL_NOT_ADDED);
 
          }         
            
@@ -152,7 +166,7 @@ session_start();
           $table="user_skills";
           $con= ["user_id"=>$userid,"skill_id"=>$skill];
           if(!$DBConnector->deleteFromMysql($table,$con)){
-              set_validity("skills can't be deleted.");
+              set_validity(SKILL_NOT_DELETED);
           }
             
          }
@@ -175,15 +189,15 @@ session_start();
             $file_extension = pathinfo($filename, PATHINFO_EXTENSION);
           
             if (!file_exists($_FILES["avatar"]["tmp_name"])) {
-                set_validity("Please upload only png or jpg file.");
+                set_validity(INVALID_IMAGE);
                return false;
             } 
             else if (! in_array($file_extension, $allowed_image_extension)){
-                set_validity("invalid image type.");
+                set_validity(INAVLID_IMAGE_FORMAT);
                 return false;
             }
             else if (($_FILES["avatar"]["size"] > 1024*1024 )) {
-                set_validity("file should be less them 1MB.");
+                set_validity(INVALID_IMAGE_SIZE);
                 return false;
                
             }  
@@ -207,12 +221,12 @@ session_start();
                         return true;
                     }
                     else{
-                       set_validity("problem in image uploading.");
+                       set_validity(ERROR_IMAGE_UPLOAD);
                        return false;
                     }            
                 } else {
                    
-                   set_validity("problem in uploading.");
+                   set_validity(ERROR_IMAGE_UPLOAD);
                    return false;
                 }
             }
@@ -237,15 +251,15 @@ session_start();
             $file_extension = pathinfo($filename, PATHINFO_EXTENSION);
           
             if (!file_exists($_FILES["resume"]["tmp_name"])) {
-                set_validity("Please upload only pdf file.");
+                set_validity(FILE_NOT_EXIST);
                return false;
             } 
             else if (! in_array($file_extension, $allowed_image_extension)){
-                set_validity("invalid document type.");
+                set_validity(INVALID_RESUME_TYPE);
                 return false;
             }
             else if (($_FILES["resume"]["size"] > 1024*1024*2 )) {
-                set_validity("file size should be less them 2MB.");
+                set_validity(INVALID_RESUME_SIZE);
                 return false;
                
             }  
@@ -271,19 +285,19 @@ session_start();
                         return true;
                     }
                     else{
-                       set_validity("problem in resume uploading.");
+                       set_validity(ERROR_RESUME_UPLOAD);
                        return false;
                     }            
                 } else {
                    
-                   set_validity("problem in uploading.");
+                   set_validity(ERROR_RESUME_UPLOAD);
                    return false;
                 }
 
             }
         }
         else{
-            set_validity("Something went wrong.");
+            set_validity(UPDATE_FAILED);
             return false;
 
         }

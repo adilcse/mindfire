@@ -152,7 +152,7 @@
                 array_push($val,$value);
                 
             }
-            $con = trim($con,"AND");
+            $con = trim($con,"AND ");
             $sql_delete="DELETE FROM $table WHERE $con"; 
             try{
                

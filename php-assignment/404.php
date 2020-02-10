@@ -9,8 +9,7 @@
         overflow: hidden;
     }
 </style>
-
-    <title>Document</title>
+    <title>404</title>
 </head>
 <body>
   <?php

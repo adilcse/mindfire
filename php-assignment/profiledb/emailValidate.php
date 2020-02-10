@@ -3,8 +3,7 @@
 class emailValidate{
     private $email;
     public function __construct($email){
-        $this->email =urlencode($email);
-      
+        $this->email =urlencode($email);     
     }
     public function validate(){
         $curl = curl_init();
@@ -16,7 +15,7 @@ class emailValidate{
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "GET",
+            CURLOPT_CUSTOMREQUEST => "GET"
         ));  
         $response = curl_exec($curl);
         $err = curl_error($curl);  

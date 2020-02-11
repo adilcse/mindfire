@@ -1,7 +1,8 @@
 <?php
 require_once 'vendor/autoload.php';
+require_once('profiledb/dbConnectpdo.php');
 	session_start();
-	 include('profiledb/dbConnectpdo.php');
+	
 
 	if (!empty($_POST))
 	{
@@ -11,15 +12,19 @@ require_once 'vendor/autoload.php';
 			$client = new Google_Client(['client_id' => $CLIENT_ID]);  // Specify the CLIENT_ID of the app that accesses the backend
 			$payload = $client->verifyIdToken($id_token);
 			if ($payload) {
-			$userid = $payload['sub'];
-			//work from here
-			checkUserExist($payload);
-			
+				
+			if($id=checkUserExist($payload)){
+				signIn($id,$payload['email']);
+				die("googleSignedIn");
+			}else{
+				RegisterAndSignIn($payload);
+			}
+			echo "googleSignedIn";
 			} else {
 				echo "error";
 			// Invalid ID token
 			}
-			echo "googleSignedIn";
+			
 			die;
 			
 		}
@@ -41,10 +46,8 @@ require_once 'vendor/autoload.php';
 		if($result){
 			//varify password
 			if($uid == $result["user_name"] && password_verify($password, $result["password"])){
-				$_SESSION["uid"]=$result["id"];
-				$_SESSION["username"]=$uid;
-				$_SESSION["LoggedIn"]=true;
-				$_SESSION["login-error"]=NULL;
+				signIn($result["id"],$uid);
+				
 				if($_POST['rememberme'] == 'true'){
 					setcookie("uid",$result["id"], time() + (86400 * 10), "/");
 					setcookie("username",password_hash($uid,PASSWORD_DEFAULT), time() + (86400 * 10), "/");	
@@ -76,8 +79,60 @@ require_once 'vendor/autoload.php';
 	}
 
 	function checkUserExist($payload){
+		$DBConnector = DataBaseConnecter::getInstance(); 
+		$username = $payload['email'];
+		try{
+			if($DBConnector->getConnect()){
+		$resultAll = $DBConnector->selectFromMysql("user_credentials",["user_name","password","id"],["user_name"=>$username]);
+		$result = $resultAll[0];
 
+		if($result){
+			return $result['id'];
+			}
+			else{
+				return false;
+			}
+		}else{
+			die("error");
+		}
+		return false;
+	}catch(Exception $e){
+		die("error");
 	}
+		
+	}
+	function signIn($uid,$username){
+		$_SESSION["uid"]=$uid;
+		$_SESSION["username"]=$username;
+		$_SESSION["LoggedIn"]=true;
+		$_SESSION["login-error"]=NULL;
+	
+	}
+	function registerAndSignin($payload){
+		$DBConnector = DataBaseConnecter::getInstance(); 
+		$username=$payload['email'];
+		if($DBConnector->insertIntoMysql("user_credentials",["user_name","password"],[$username,"NOT_REQUIRED"])){
+			$resultAll = $DBConnector->selectFromMysql("user_credentials",["id"],["user_name"=>$username]);
+			$result = $resultAll[0];
+			if($result){
+				$table ="users";
+				$columns = ["first_name"=>$payload['given_name'],"last_name"=>$payload['family_name'],"email"=>$payload['email'],"image_address"=>$payload['picture']];
+				$con = ["id"=>$result['id']];
+			   $resultSuccess = $DBConnector->updateMysql($table,$columns,$con);
+			   if($resultSuccess){
+				signIn($result['id'],$username);
+				die("googleSignedIn");
+			   }else
+			   	die("error");
+				
+			}else{
+				die("error");
+			}
+		}
+		else{
+			die("error");
+		}
+		}
 	if(isset($_COOKIE['uid'])){
 		if($DBConnector->getConnect()){
 			$resultAll = $DBConnector->selectFromMysql("user_credentials",["user_name","id"],["id"=>$_COOKIE['uid']]);

@@ -83,7 +83,8 @@
 <script type="text/javascript">
 const validateUser=(user)=>{
 	const letters = /^[A-Za-z0-9]+$/;
-	if(user.match(letters) && user.length > 3){
+	const email = /^[a-zA-Z]+[a-zA-Z0-9\.\_]*@[a-zA-Z]+\.[a-zA-Z]{3,}$/;
+	if(user.match(email)||(user.match(letters) && user.length > 3)){
 		return true;
 	}
 	else{
@@ -151,6 +152,8 @@ $('.card').waitMe({
 
 }
 function onSignIn(googleUser) {
+	var current_effect ='stretch';
+		run_waitMe(current_effect);
   var profile = googleUser.getBasicProfile();
   var id_token = googleUser.getAuthResponse().id_token;
   let postData = {
@@ -167,12 +170,13 @@ function onSignIn(googleUser) {
 				if(result.includes("success")){
 					window.location.replace("index.php");
 				}else if(result.includes("googleSignedIn")){
-					$("div.error").text("signedin By google");	
+					window.location.replace("index.php");
 				}else if(result.includes("connectionFailed")){
 					$("div.error").text("connection Failed");	
 				}else if(result.includes("error")){
 					$("div.error").text("google signin failed");	
-				}		
+				}	
+				$(".card").waitMe("hide");		
 			},
 			error: function(e){
 				$(".card").waitMe("hide");	

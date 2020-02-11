@@ -22,6 +22,7 @@
 			$condition=["users.id"=>$_SESSION['uid']];
 			$lmt="LIMIT 1";
 			$resultAll = $DBConnector->selectFromMysql($table,$columns,$condition,$lmt);
+			
 			if($resultAll)
 				{
 					try{
@@ -36,19 +37,17 @@
 						$age=$result['age'];
 						$img = $result['image_address'];
 						$resume_link=$result['resume_address'];
-
-
 					}
 					if(!$img){
 						$img ="https://banner2.cleanpng.com/20180521/ocp/kisspng-computer-icons-user-profile-avatar-french-people-5b0365e4f1ce65.9760504415269493489905.jpg";
 					}
 				}catch(Exception $e){
 					// die($conn->error);
-					die("<h1> something went wrong </h1>");
+					die("<h1> something went wrong1 </h1>");
 				}
 			}
 			else{
-				die("<h1> something went wrong </h1>");
+				die("<h1> something went wrong 2 </h1>");
 			}
 			}else{
 				header("Location: ../login.php");
@@ -176,7 +175,7 @@
 							<div class="col-md-6 col-sm-6">
 								<div class="row ">
 									<div class="col">
-										<img src='<?php echo $img?>'  width="200px" height="200px" class="rounded mx-auto d-block" alt="avatar" id="profilepic">
+										<img src='<?php echo $img?>'  width="200px" height="200px" class="rounded mx-auto d-block" alt="Image not Found" id="profilepic">
 									</div>
 									<div class="text-center">
 										<div class="form-check ">

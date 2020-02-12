@@ -1,5 +1,5 @@
 <?php
-require_once 'vendor/autoload.php';
+require_once('vendor/autoload.php');
 require_once('profiledb/dbConnectpdo.php');
 	session_start();
 	

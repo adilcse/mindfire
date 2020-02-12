@@ -1,6 +1,6 @@
 <?php 
 // DataBaseConnecter class have all the method using database
-include_once("../constants/database.php");
+require_once('database.php');
     class DataBaseConnecter extends Database { 
         private static $obj;			
         private $conn;                     
@@ -33,15 +33,22 @@ include_once("../constants/database.php");
             return implode(', ', $col); 
         }
         // convert array to string for sql
-        private function getConditions($condition,$sep="AND"){
+        private function getConditions($condition,$sep="AND",$q="?"){
             $con='';
             $val =[];
-            foreach($condition as $key=>$value){
-                $con .= $key." = ? ".$sep." ";
-                array_push($val,$value);            
-            }
-            $con = trim($con,$sep." ");
-            return array($val,$con);
+            if(!$q){
+                foreach($condition as $key=>$value){
+                    $con .= $key." = ".$value." ".$sep." ";         
+                }
+                $con = trim($con,$sep." "); 
+            }else{
+                foreach($condition as $key=>$value){
+                    $con .= $key." = ".$q." ".$sep." ";
+                    array_push($val,$value);            
+                }
+                $con = trim($con,$sep." ");
+             }
+        return array($val,$con);
         }
         //run sql
         private function runSqlCommand($sql,$val,$type="select"){
@@ -56,6 +63,26 @@ include_once("../constants/database.php");
             {
             return false;
             }
+        }
+        //join table 
+        public function selectFromMysqlJoin($table,$columns,$joinType,$joinTable,$onCondition,$whereCondition=["true"=>"true"],$lmt=''){
+            $col = $this->getColumnString($columns);
+
+        
+            //generate and separated string for condition
+           $conditions = $this->getConditions($whereCondition,"AND",false);
+           $con = $conditions[1];
+           $val1 = $conditions[0];
+            $conditions = $this->getConditions($onCondition,"ON",false);
+            $onCon = $conditions[1];
+            $val2 = $conditions[0];
+            $val = array_merge($val1,$val2);
+            $lmt = 'LIMIT '.$lmt;
+          
+            $sql = "SELECT $col FROM $table $joinType $joinTable ON $onCon  WHERE $con $lmt";
+           die($sql);
+            return $this->runSqlCommand($sql,$val,"select");
+            
         }
         //to select any column from any table by giving condition
         public function selectFromMysql($table,$columns=['*'],$condition=["1"=>"1"]){

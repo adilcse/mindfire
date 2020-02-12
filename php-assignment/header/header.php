@@ -30,7 +30,7 @@ $username=$_SESSION["username"] ;
     
     <a class="<?php echo $home ;?>" href="/">Home</a>
     <a class="<?php echo $profile ;?>" href="/profiledb/profile.php">profile</a>
-    <a class="<?php echo $post ;?>" href="/posts/post.php">Post</a>
+    <a class="<?php echo $post ;?>" href="/posts/view.php">Post</a>
     <a class="<?php echo $about ;?>" href="/about/about.php">About</a>
     <a  href="/index.php?logout=true" onClick="logout()">Logout</a>
   </div>

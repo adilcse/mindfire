@@ -14,7 +14,7 @@ require_once('profiledb/dbConnectpdo.php');
 			if ($payload) {
 				
 			if($id=checkUserExist($payload)){
-				signIn($id,$payload['email']);
+				signIn($id,$payload['email'],$payload['given_name']);
 				die("googleSignedIn");
 			}else{
 				RegisterAndSignIn($payload);
@@ -32,6 +32,7 @@ require_once('profiledb/dbConnectpdo.php');
 		$password=$_POST["password"];
 		if(strpos($uid,",") and strpos($uid,";") and strpos($uid,"-") and strpos($uid,"\'")){
 			$_SESSION["username"]=NULL;
+			$_SESSION["uid"]=NULL;
 			$_SESSION["LoggedIn"]=false;
 			$_SESSION["login-error"]="username not exist";
 			echo "userNotExist";
@@ -46,7 +47,7 @@ require_once('profiledb/dbConnectpdo.php');
 		if($result){
 			//varify password
 			if($uid == $result["user_name"] && password_verify($password, $result["password"])){
-				signIn($result["id"],$uid);
+				signIn($result["id"],$uid,$result["user_name"]);
 				
 				if($_POST['rememberme'] == 'true'){
 					setcookie("uid",$result["id"], time() + (86400 * 10), "/");
@@ -56,6 +57,7 @@ require_once('profiledb/dbConnectpdo.php');
 			}
 		   else{
 			$_SESSION["username"]=NULL;
+			$_SESSION["uid"]=NULL;
 			$_SESSION["LoggedIn"]=false;
             $_SESSION["login-error"]="username or password incorrect";
             echo "incorrect";
@@ -65,6 +67,7 @@ require_once('profiledb/dbConnectpdo.php');
 	} else {
 		$_SESSION["username"]=NULL;
 		$_SESSION["LoggedIn"]=false;
+		$_SESSION["uid"]=NULL;
         $_SESSION["login-error"]="username not exist ";
         echo "userNotExist";
 		}
@@ -101,7 +104,8 @@ require_once('profiledb/dbConnectpdo.php');
 	}
 		
 	}
-	function signIn($uid,$username){
+	function signIn($uid,$username,$name){
+		$_SESSION["name"]=$name;
 		$_SESSION["uid"]=$uid;
 		$_SESSION["username"]=$username;
 		$_SESSION["LoggedIn"]=true;
@@ -120,7 +124,7 @@ require_once('profiledb/dbConnectpdo.php');
 				$con = ["id"=>$result['id']];
 			   $resultSuccess = $DBConnector->updateMysql($table,$columns,$con);
 			   if($resultSuccess){
-				signIn($result['id'],$username);
+				signIn($result['id'],$username,$payload['given_name']);
 				die("googleSignedIn");
 			   }else
 			   	die("error");

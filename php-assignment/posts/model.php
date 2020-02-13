@@ -20,19 +20,81 @@ class model{
           return false;
       }
     }
-    public function getAllPosts($limit)
+    public function getAllPosts($limit,$userId)
     {
+      //  SELECT posts.id as id, users.first_name as name, posts.title, posts.body,
+      //COUNT(likes.user_id) as likes FROM posts INNER JOIN users ON posts.user_id = users.id 
+      //LEFT JOIN likes ON posts.id=likes.post_id GROUP BY posts.id  
+      //ORDER BY posts.created_on DESC  LIMIT 5;
+
+         
         $table = 'posts';
-        $columns = ['users.first_name as by','posts.title','posts.body'];
-        $joinType='INNER JOIN';
-        $onCondition=['posts.user_id'=>'users.id'];
-        $joinTable="users";
+        $columns = ['posts.id as id','users.first_name as name','posts.title','posts.body','COUNT(likes.user_id) as likes'];
+        $joinType=['JOIN','LEFT JOIN'];
+        $onCondition=['posts.user_id'=>'users.id','posts.id'=>'likes.post_id'];
+        $joinTable=["users","likes"];
         $whereCondition=["true"=>"true"];
-        $lmt=$limit;
+        $lmt="GROUP BY posts.id ORDER BY posts.created_on DESC LIMIT ".$limit;
+
         $resultAll = $this->DBConnector->selectFromMysqlJoin($table,$columns,$joinType,$joinTable,$onCondition,$whereCondition,$lmt);
+        
+        //get user likes
+        $table="likes";
+        $columns=["post_id"];
         
         return $resultAll;
         # code...
     }
-
+    public function getComments($postId,$limit)
+    {
+        $table = 'comments';
+        $columns = ['users.first_name as name','comments.comment'];
+        $joinType='INNER JOIN';
+        $onCondition=['comments.user_id'=>'users.id'];
+        $joinTable="users";
+        $whereCondition=["post_id"=>$postId];
+        
+        $lmt=" ORDER BY comments.created_on DESC LIMIT ".$limit;
+        $resultAll = $this->DBConnector->selectFromMysqlJoin($table,$columns,$joinType,$joinTable,$onCondition,$whereCondition,$lmt);
+        
+        return $resultAll;
+    }
+    public function addComment($comment,$postId,$userId){
+        $table="comments";
+        $columns=['post_id','comment','user_id'];
+        $values = [$postId,$comment,$userId];
+        if($this->DBConnector->insertIntoMysql($table,$columns,$values)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    public function addLike($postId,$userId)
+    {
+       $table="likes";
+       $columns=["post_id","user_id"];
+       $values = [$postId,$userId];
+       $res =$this->DBConnector->insertIntoMysql($table,$columns,$values);
+        return $res;
+       if($res){
+        return true;
+    }
+    else{
+        return false;
+    }
+    }
+    public function removeLike($postId,$userId)
+    {
+       $table="likes";
+       $condition=["post_id"=>$postId,"user_id"=>$userId];
+       return $result=$this->DBConnector->deleteFromMysql($table,$condition); 
+       if($result){
+        return true;
+    }
+    else{
+        return false;
+    }
+    }
+   
 }

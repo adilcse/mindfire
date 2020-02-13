@@ -50,17 +50,33 @@ require_once('database.php');
              }
         return array($val,$con);
         }
+        private function getJoinCondition($joinTable,$joinType,$onCondition)
+        {
+
+            $result='';
+            $index=0;
+            foreach($onCondition as $key=>$value){
+                $result.=$joinType[$index]." ".$joinTable[$index]." ON ".$key." = ".$value." ";
+                $index++;
+            }
+            return $result;
+
+            # code...
+        }
         //run sql
         private function runSqlCommand($sql,$val,$type="select"){
             try{
                 $stmt = $this->conn->prepare($sql);  
-                $stmt->execute($val); 
+                $res =$stmt->execute($val); 
+               
                 if($type === "select")
                      return ($stmt->fetchAll());
                 else
+                   // if($res->errorInfo)
                     return true;     
             }catch(PDOException $e)
             {
+                return $e;
             return false;
             }
         }
@@ -77,10 +93,11 @@ require_once('database.php');
             $onCon = $conditions[1];
             $val2 = $conditions[0];
             $val = array_merge($val1,$val2);
-            $lmt = 'LIMIT '.$lmt;
+            $joinCondition = $this->getJoinCondition($joinTable,$joinType,$onCondition);
+            
           
-            $sql = "SELECT $col FROM $table $joinType $joinTable ON $onCon  WHERE $con $lmt";
-           die($sql);
+            $sql = "SELECT $col FROM $table $joinCondition  WHERE $con $lmt";
+           
             return $this->runSqlCommand($sql,$val,"select");
             
         }
@@ -129,6 +146,7 @@ require_once('database.php');
             $con=$conditions[1]; 
             $val =$conditions[0];
             $sql_delete="DELETE FROM $table WHERE $con"; 
+           // return $sql_delete;
             return $this->runSqlCommand($sql_delete,$val,"delete");
         }
         // public function test(){

@@ -1,4 +1,3 @@
-   <!-- this class contain all the components needs to show on the post page -->
         <?php  
             class viewPosts{
                 //userId is used to track user posts and likes.
@@ -18,36 +17,35 @@
                                 
                             break;
                             case "none":
-                                $likeClass='';
+                                $likeClass='text-secondary';
                              
                             break;
                             default:
-                                $likeClass='';
-                        }
-                        $comments='';
-                        foreach($value['comments'] as $comment){
-                            $comments .='
-                            <p>
-                            '.$comment["text"].' <br>
-                            <span class="text-muted">by '.$comment["by"].'
-                            </p>
-                            ';
+                                $likeClass='text-secondary';
                         }
                         $posts.= '
-                        <div class="card ">
+                        <div class="card " id=card'.$value["id"].'>
                         <div class="card-body">
-                            <h5 class="card-title">'.$value["title"].'<h6 class="text-muted"> by '.$value["by"].'</h6></h5>
+                            <h5 class="card-title">'.$value["title"].'<h6 class="text-muted"> by '.$value["name"].'</h6></h5>
 
                            
                             <p class="card-text">'.$value["body"].'</p>
-                            <h3><i onclick="myFunction(this,\''.$likeClass.'\',\''.$value['like'].'\',\''.$value['id'].'\',\''.$this->userId.'\')" class="fa fa-thumbs-up '.$likeClass.' "></i> </h3> 
+                            <div class="like">
+                                <h3><i onclick="myFunction(this,\''.$likeClass.'\','.$value["id"].')" class="fa fa-thumbs-up '.$likeClass.' "></i> </h3> 
+                                <h6><span>'.$value["likes"].'</span> Likes</h6>
+                             </div>   
                             <div class="form-group">
                             <label class="text-secondary font-weight-bold border-bottom" for="comment">Comments</label>
-                            <div>
-                            '.$comments.'
+                            <div class="commentArea">
+                                <div id="showCommentText" class="text-secondary" onclick="loadComments(this,'.$value["id"].')">
+                               <i class="fa fa-clock-o"></i>Show Comments
+                                </div>
+                                <div class="comments" hidden>
+                                </div>
+                                <textarea  class="form-control" id="comment" name="comment" row="2"></textarea>
+                            <button type="button" class="btn btn-secondary mt-2" onclick=addComment(this,'.$value['id'].')>Comment</button>
                             </div>
-                            <textarea  class="form-control" id="comment" name="comment" row="2"></textarea>
-                            <button type="button" class="btn btn-secondary mt-2">Comment</button>
+                            
                         </div>
                         </div>
                      </div>

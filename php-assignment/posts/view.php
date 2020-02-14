@@ -10,19 +10,12 @@
                     $posts='';
                     foreach($post as $value){
                         $likeClass='';
+                       if($value['liked']){
+                        $likeClass = 'text-primary';
+                       }else{
+                        $likeClass='text-secondary';
+                       }
                        
-                        switch($value['like']){
-                            case "liked":
-                                $likeClass = 'text-primary';
-                                
-                            break;
-                            case "none":
-                                $likeClass='text-secondary';
-                             
-                            break;
-                            default:
-                                $likeClass='text-secondary';
-                        }
                         $posts.= '
                         <div class="card " id=card'.$value["id"].'>
                         <div class="card-body">

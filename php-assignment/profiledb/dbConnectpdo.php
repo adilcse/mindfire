@@ -33,17 +33,17 @@ require_once('database.php');
             return implode(', ', $col); 
         }
         // convert array to string for sql
-        private function getConditions($condition,$sep="AND",$q="?"){
+        private function getConditions($condition,$sep="AND",$q="?",$op=" = "){
             $con='';
             $val =[];
             if(!$q){
                 foreach($condition as $key=>$value){
-                    $con .= $key." = ".$value." ".$sep." ";         
+                    $con .= $key.$op.$value." ".$sep." ";         
                 }
                 $con = trim($con,$sep." "); 
             }else{
                 foreach($condition as $key=>$value){
-                    $con .= $key." = ".$q." ".$sep." ";
+                    $con .= $key.$op.$q." ".$sep." ";
                     array_push($val,$value);            
                 }
                 $con = trim($con,$sep." ");
@@ -66,8 +66,8 @@ require_once('database.php');
         //run sql
         private function runSqlCommand($sql,$val,$type="select"){
             try{
-                $stmt = $this->conn->prepare($sql);  
-                $res =$stmt->execute($val); 
+                $stmt = $this->conn->prepare($sql);
+                count($val>0) ? $res =$stmt->execute($val):$res = $stmt->execute; 
                
                 if($type === "select")
                      return ($stmt->fetchAll());

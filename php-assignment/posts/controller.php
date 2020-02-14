@@ -19,9 +19,9 @@
         public  function setViewPage(){
             echo $this->viewPost->addPost();
             $posts = $this->getPosts(5);
-            echo $this->viewPost->showPosts($posts);
-            var_dump($posts);
-            // var_dump($this->getComments(4,5));
+           echo $this->viewPost->showPosts($posts);
+          ///  var_dump($posts);
+            // var_dump($this->getComments(104,5));
 
         }
         public function setPost($post)
@@ -68,7 +68,6 @@
         //     echo $post->showPosts($posts,true); 
 
         $controller=new controller($_SESSION['uid']);
-      
         if(isset($_POST['getComment'])&& $_POST['getComment']==='true'){
             $postId=$_POST['getPostId'];
             $comments = $controller->getComments($postId,5);

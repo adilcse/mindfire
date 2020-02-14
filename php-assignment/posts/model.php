@@ -41,17 +41,35 @@ class model{
         //get user likes
         $table="likes";
         $columns=["post_id"];
-        
-        return $resultAll;
+        $whereCondition = ["user_id"=>$userId];
+        $result = $this->DBConnector->selectFromMysql($table,$columns,$whereCondition);
+        $likes=[];
+        foreach($result as $value){
+            array_push($likes,$value['post_id']);
+        }
+        $posts=[];
+        foreach($resultAll as $key=>$post){
+          
+            if(in_array($post['id'],$likes)){
+               $post = array_merge($post,["liked"=>true]);
+            }    
+            else{
+               $post = array_merge($post,["liked"=>false]);    
+            }             
+            array_push($posts,$post);
+        }
+
+        return $posts;
+       // return $resultAll;
         # code...
     }
     public function getComments($postId,$limit)
     {
         $table = 'comments';
         $columns = ['users.first_name as name','comments.comment'];
-        $joinType='INNER JOIN';
+        $joinType=['INNER JOIN'];
         $onCondition=['comments.user_id'=>'users.id'];
-        $joinTable="users";
+        $joinTable=["users"];
         $whereCondition=["post_id"=>$postId];
         
         $lmt=" ORDER BY comments.created_on DESC LIMIT ".$limit;

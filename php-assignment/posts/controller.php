@@ -84,7 +84,7 @@
             $post =array('title'=>$_POST['title'],'body'=>$_POST['body']);
             if(isset($_POST['title'])&& isset($_POST['body']))
                 $controller->setPost($post);
-             else
+                header("Location: /posts/view.php"); 
                 die;
          }
          if(isset($_POST['addLike'])&& $_POST['addLike']==='true'){

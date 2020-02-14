@@ -1,3 +1,4 @@
+//it registers a like of a user to  a post
 function likePost(likeArea,postId,value){
     let area=$(likeArea).parent().parent();
     const likeSpan=area.children("h6").children("span");
@@ -28,6 +29,7 @@ function likePost(likeArea,postId,value){
         }
   });
 }
+//when user clickes aa liad comment button then it loads the comment of a post
 function loadComments(commentArea,postId){
     commentArea.innerHTML="Loading...";
     const postData={
@@ -47,6 +49,7 @@ function loadComments(commentArea,postId){
             console.log(e);
         }
   });
+  //if loading of comment fails then it alerts the user
   function loadFailed(commentArea){
     let  area=$(commentArea).parent();
     area.children("#showCommentText").text("try again...");
@@ -78,15 +81,21 @@ function loadComments(commentArea,postId){
   }
     //console.log(postId);
 }
+//when user adds a comments it saves the comment of the user.
 function addComment(commentArea,postId) {
     let  area=$(commentArea).parent();
-    let newcomments=area.children(".comments").attr("hidden",false);
     let comment =area.children("textarea").val(); 
+    if(comment.length<3){
+        area.children("textarea").addClass("is-invalid");
+        return;
+    }else{
+        area.children("textarea").addClass("is-valid");
+    }
+   area.children(".comments").attr("hidden",false);
     let postData = {
         addComment:"true",
         comment:comment,
-        postId :postId,
-        
+        postId :postId, 
     }
     $.ajax({
         url: "controller.php", 
@@ -96,12 +105,15 @@ function addComment(commentArea,postId) {
             result=JSON.parse(result);
             if(result.success)
             { 
+                area.children("textarea").removeClass("is-valid");
                 console.log(result);
                 area.children("textarea").val('');
                 var txt = $("<p></p>").text(comment);
                 var span=$("<span></span>").text("by "+result.name);
                 span.addClass("text-secondary");
-                newcomments.append(txt,span);  
+                newcomments.append(txt,span);
+               // loadComments(commentArea,postId);
+
             }else{
                 console.log(result);
             }
@@ -132,8 +144,28 @@ else if(liked==="text-primary"){
     likePost(x,id,false);
     return;
 }
+}
+window.onload = function(){
+    $( "#addPost" ).submit(function( event ) {
+        let title=$("#title").val();
+        let post=$("#post").val();
+       console.log(title,post);
+       if(title.length < 3){
+        $("#title").addClass("is-invalid");
 
-               
- 
+       }else if(post.length <3){
+        $("#post").addClass("is-invalid");
+        $("#title").removeClass("is-invalid") 
+        $("#title").addClass("is-valid");
+       }
+       else{
+        $("#post").removeClass("is-invalid") ;
+        $("#title").removeClass("is-invalid") 
+        $("#post").addClass("is-valid");
+        $("#title").addClass("is-valid");
+        return;
+       }
+        event.preventDefault();
 
+      });
 }

@@ -36,6 +36,9 @@
                                 <div class="comments" hidden>
                                 </div>
                                 <textarea  class="form-control" id="comment" name="comment" row="2"></textarea>
+                                <div class="invalid-feedback">
+                                    Please enter a valid comment.
+                                </div>
                             <button type="button" class="btn btn-secondary mt-2" onclick=addComment(this,'.$value['id'].')>Comment</button>
                             </div>
                             
@@ -50,21 +53,27 @@
 
                 public function addPost(){
                     return '
-                    <form action="controller.php" method="post">
+                    <form action="controller.php" method="post" id="addPost">
                     <div class="card post">
                     <input type="hidden" name="addPost" value="true"/>
                     <div class="form-group">
                         <label for="username">Post Title</label>
                         <input type="text" class="form-control" id="title" name="title" >
+                        <div class="invalid-feedback">
+                        Please enter a valid title.
+                      </div>
                     </div>
                     <div class="form-group">
                         <label for="post">POST</label>
                         <textarea class="form-control" id="post" name="body" rows="3"></textarea>
+                        <div class="invalid-feedback">
+                            Please enter a valid post.
+                        </div>
                     </div>
                     <div class="mt-3">
                     <input
                    
-                    <input type="submit" class="btn btn-primary" value="Post">
+                    <input type="submit"  class="btn btn-primary" value="Post">
                     
                     <button type="button" class="btn btn-primary">Clear</button> 
                 </div> 
@@ -74,6 +83,7 @@
                     ';
                 }
             }
+            include_once("controller.php");
         ?>
         
         

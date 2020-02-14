@@ -91,11 +91,12 @@ function addComment(commentArea,postId) {
     }else{
         area.children("textarea").addClass("is-valid");
     }
-   area.children(".comments").attr("hidden",false);
+   let newcomments =area.children(".comments").attr("hidden",false);
     let postData = {
         addComment:"true",
         comment:comment,
-        postId :postId, 
+        postId :postId,
+        
     }
     $.ajax({
         url: "controller.php", 
